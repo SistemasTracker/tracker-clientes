@@ -14,7 +14,7 @@ function App() {
   return (
   
     <Routes>
-      <Route path='/tracker-clientes/' element={<Login></Login>}></Route>
+      <Route path='/' element={<Login></Login>}></Route>
       <Route path='/formulario' element={<FormularioOrden></FormularioOrden>}></Route>
       <Route path='/formulario1' element={<FormularioOrdenCliente></FormularioOrdenCliente>}></Route>
       <Route path='/orden' element={<VerOrden></VerOrden>}></Route>
