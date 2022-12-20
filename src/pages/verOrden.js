@@ -68,8 +68,10 @@ function VerOrden() {
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <Link className="nav-link" to={"/usuarios"} state={{tokenO:tokenO}}>Usuarios</Link>              
-                <a className="nav-link" aria-current="page" href="/orden">Ordenes</a>                
+               <div className="navbar-nav">
+                <Link className="nav-link" to={"/usuarios"} state={{tokenO:tokenO}} aria-current="page">Usuarios </Link>            
+                <a className="nav-link" aria-current="page" href="/orden"> Ordenes</a> 
+                </div>               
             </div>
             <form class="d-flex">
               <Link to={"/"} class="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
