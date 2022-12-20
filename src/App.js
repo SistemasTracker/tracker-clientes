@@ -16,7 +16,7 @@ function App() {
       <Routes>
       <Route path='/' element={<Login></Login>}></Route>
       <Route path='/formulario' element={<FormularioOrden></FormularioOrden>}></Route>
-      <Route path='/formulario1' element={<FormularioOrdenCliente></FormularioOrdenCliente>}></Route>
+      <Route path='/formulariocliente' element={<FormularioOrdenCliente></FormularioOrdenCliente>}></Route>
       <Route path='/orden' element={<VerOrden></VerOrden>}></Route>
       <Route path='/ordenuser' element={<VerOrdenUser></VerOrdenUser>}></Route>
       <Route path='/usuarios' element={<Usuarios></Usuarios>}></Route>

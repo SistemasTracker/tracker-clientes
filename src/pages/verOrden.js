@@ -60,17 +60,16 @@ function VerOrden() {
       <>
       <nav className="navbar navbar-expand-lg navbar-light bg-warning">
           <div className="container-fluid">
-            <a className="navbar-brand" href="/orden">
+            <span className="navbar-brand" >
             <img src={LOGO} alt="" width="30" height="24" class="d-inline-block align-text-top"/>
               TRACKER X
-            </a>
+            </span>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                <div className="navbar-nav">
                 <Link className="nav-link" to={"/usuarios"} state={{tokenO:tokenO}} aria-current="page">Usuarios </Link>            
-                <a className="nav-link" aria-current="page" href="/orden"> Ordenes</a> 
                 </div>               
             </div>
             <form class="d-flex">
@@ -79,6 +78,8 @@ function VerOrden() {
           </div>
         </nav>
       <div className='container my-5'>
+          <h3 className='text-center'>LISTADO DE ORDENES DE ACTIVACIÓN</h3>
+          <br></br>
       <Table className='table table-dark table-hover table-bordered align-middle table-responsive'>
         <thead>
             <tr>
@@ -107,7 +108,7 @@ function VerOrden() {
        <Pagination postPerPage={postPerPage} totalPosts={ordenes.length} paginate={paginate}></Pagination>
       </div>
 
-      <Modal show={show} onHide={handleClose} size="lg"
+      <Modal show={show} onHide={handleClose} className="modal-xl"
       aria-labelledby="contained-modal-title-vcenter"
       centered>
         <Modal.Header closeButton>
@@ -115,21 +116,61 @@ function VerOrden() {
         </Modal.Header>
         <Modal.Body>
             <Container>
-                  <Row>
-                  <Col xs={6} md={4}>
+            <Row>
+                  <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Nombre:</label> <label className="form-label"> {selectedData.nombreCliente}</label>
                   </Col>
-                  <Col xs={6} md={4}>
+                  <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Dirección:</label> <label className="form-label"> {selectedData.direccion}</label>
                   </Col>
-                  <Col xs={6} md={4}>
+                  <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Fecha de envío:</label> <label className="form-label"> {selectedData.fecha}</label>
                   </Col>
-                  <Col xs={6} md={4}>
+                  <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Teléfono:</label> <label className="form-label"> {selectedData.telefono1}</label>
                   </Col>
-                  <Col xs={6} md={4}>
-                  <label className="form-label fw-bold">Teléfono:</label> <label className="form-label"> {selectedData.telefono1}</label>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Email:</label> <label className="form-label"> {selectedData.email}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Contacto de Emergencia:</label> <label className="form-label"> {selectedData.nombreEmergencia}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Teléfono Emergencia:</label> <label className="form-label"> {selectedData.telefono2}</label>
+                  </Col>
+                  <Col xs={8}>
+                  <label className="form-label fw-bold">Email Emergencia:</label> <label className="form-label"> {selectedData.correoEmergencia}</label>
+                  </Col>
+                  </Row>
+                  <Row>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Chasis:</label> <label className="form-label"> {selectedData.chasis}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Motor:</label> <label className="form-label"> {selectedData.motor}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Marca:</label> <label className="form-label"> {selectedData.marca}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Modelo:</label> <label className="form-label"> {selectedData.modelo}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Placa:</label> <label className="form-label"> {selectedData.placa}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Color:</label> <label className="form-label"> {selectedData.color}</label>
+                  </Col>
+                  </Row>
+                  <Row>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Plan:</label> <label className="form-label"> {selectedData.plan} Años</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Financiera:</label> <label className="form-label"> {selectedData.financiera}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Vendedor:</label> <label className="form-label"> {selectedData.vendedor}</label>
                   </Col>
                   </Row>
             </Container>

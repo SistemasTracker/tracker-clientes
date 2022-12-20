@@ -36,7 +36,7 @@ import {useNavigate} from 'react-router-dom';
           }      
         } catch (error) {
           console.log(error)
-          
+          alert('Usuario o contraseña incorrecto')
         }
         
       }}
@@ -47,7 +47,7 @@ import {useNavigate} from 'react-router-dom';
                    <div className="fadeIn first">
                      <img src={LOGO} id="icon" alt="User Icon"/>
                    </div>        
-               <Form onSubmit={handleSubmit}>                
+               <Form onSubmit={handleSubmit} >                
                      <input type="text" className="fadeIn second" name="name" placeholder="Usuario" onChange={handleChange}/>
                      <input type="password" className="fadeIn third" name="password" placeholder="Contraseña" onChange={handleChange}/>
                      <input type="submit" className="fadeIn fourth" value="Log In"/>              
