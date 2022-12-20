@@ -74,7 +74,7 @@ function VerOrden() {
                 </div>               
             </div>
             <form class="d-flex">
-              <Link to={"/tracker-clientes"} class="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
+              <Link to={"/"} class="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
             </form>
           </div>
         </nav>
