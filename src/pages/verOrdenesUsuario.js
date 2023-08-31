@@ -11,6 +11,10 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
+import moment from 'moment';
+//import Pagination from '../components/Pagination.js';
+import {FaSearch} from 'react-icons/fa';
+
 
 
 function VerOrdenUser() {
@@ -20,8 +24,9 @@ function VerOrdenUser() {
    const idUsuario= location.state.idUsuario;
    const [currentPage, setCurrentPage] = useState(1);
    const [postPerPage] = useState(10);
-   const [selectedData, setSelectedData] = useState({});
+   const [selectedData, setSelectedData] = useState([]);
    const [show, setShow] = useState(false);
+   const [query,setQuery] = useState("");
   
   
    const handleClose = () => setShow(false);
@@ -41,16 +46,27 @@ function VerOrdenUser() {
       handleShow();
      ;
     }
+
         //console.log(ordenes[1].nombreCliente + "ordenes");
         const indexOfLastPost = currentPage * postPerPage;
         const indexOfFirstPost = indexOfLastPost - postPerPage;
-        const currentPosts = ordenes.slice(indexOfFirstPost,indexOfLastPost);
-        //PAGINACION
-        const paginate = (pageNumber) => setCurrentPage(pageNumber);
+        const currentPosts = ordenes.filter(ordenes=>ordenes.nombreCliente.toLowerCase().includes(query.toLowerCase())).slice(indexOfFirstPost,indexOfLastPost);
+        //paginas filtro
+        const pageFilter = ordenes.filter(ordenes=>ordenes.nombreCliente.toLowerCase().includes(query.toLowerCase())).length;
+
+        const pageNumbers = [];
+        for(let i = 1; i <= Math.ceil(pageFilter/ postPerPage); i++){
+        pageNumbers.push(i);
+        }
+
+        const paginate = (number) => 
+        setCurrentPage(number);
+
 
       return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-warning">
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <nav className="navbar navbar-expand-lg navbar-light bg-warning" style={{ position: "fixed", top: 0, width: "100%", zIndex: 100 }}>
         <div className="container-fluid">
           <span className="navbar-brand" >
           <img src={LOGO} alt="" width="30" height="24" class="d-inline-block align-text-top"/>
@@ -60,18 +76,29 @@ function VerOrdenUser() {
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <div className="navbar-nav">
                 <Link className="nav-link" to={"/formulario"} state={{token:token, idUsuario:idUsuario}}>Formulario</Link>
             </div>
-          </div>
+          </ul>
+         
           <form class="d-flex">
-            <Link to={"/"} class="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
+            <Link to={"/"} className="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
           </form>
+          </div>
         </div>
       </nav>
-      <div className='container my-5'>
+      <div className='container my-8' style={{ marginTop: '4rem', flex: 1 }}> 
       <h3 className='text-center'>LISTADO DE ORDENES DE ACTIVACIÓN</h3>
           <br></br>
+          <div className='container'>
+              <div className='row'>
+                  <div className="col-md-8">                       
+                        <input type="text" placeholder="Buscar cliente.." className="search h-50" onChange={e=> setQuery(e.target.value)}></input>
+                        <FaSearch />
+                  </div>   
+              </div>                 
+            </div>    
       <Table className='table table-dark table-hover table-bordered align-middle table-responsive'>
         <thead>
             <tr>
@@ -86,16 +113,29 @@ function VerOrdenUser() {
                 {currentPosts.map(currentPosts => (
                 <tr className='table-light'>
                      <td>{currentPosts.nombreCliente}</td>
-                     <td>{currentPosts.fecha}</td>
+                     <td>{moment(currentPosts.fecha).locale('es').format(moment.HTML5_FMT.DATE)}</td>
                      <td>{currentPosts.telefono1}</td>
                      { !currentPosts.estado ? <td className='table-active table-danger'>POR CREAR</td>:<td className='table-success'>CREADO</td>}
-                     <td><Button className='btn btn-secondary' onClick={(e)=>showDetail(currentPosts.idordenTrabajo)}>VER DATOS</Button></td>                   
+                     <td><Button className='btn btn-secondary' onClick={(e)=>showDetail(currentPosts.idordenTrabajo)}>VER DATOS</Button>
+                     {/*{' '} <Link to={"/editar"} class="btn btn-primary" type="submit" state={{token:token, orden: currentPosts,  idUsuario:idUsuario}}>EDITAR</Link>*/} </td>                   
                 </tr>
                 ))}
            
         </tbody>
        </Table>  
        <Pagination postPerPage={postPerPage} totalPosts={ordenes.length} paginate={paginate}></Pagination>
+      </div>
+      <div>
+        <footer className="bg-light py-4 mt-auto">
+            <Container>
+              <Row>
+                <Col>
+                  <p className="text-center">© 2023 Tracker X. Todos los derechos reservados.</p>
+                </Col>
+              </Row>
+            </Container>
+        </footer>       
+      </div>
       </div>
       <Modal show={show} onHide={handleClose} size="xl"
       aria-labelledby="contained-modal-title-vcenter"
@@ -113,10 +153,13 @@ function VerOrdenUser() {
                   <label className="form-label fw-bold">Dirección:</label> <label className="form-label"> {selectedData.direccion}</label>
                   </Col>
                   <Col xs={4} md={4}>
-                  <label className="form-label fw-bold">Fecha de envío:</label> <label className="form-label"> {selectedData.fecha}</label>
+                  <label className="form-label fw-bold">Fecha de envío:</label> <label className="form-label"> {moment(selectedData.fecha).locale('en').format(moment.HTML5_FMT.DATE)}</label>
                   </Col>
                   <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Teléfono:</label> <label className="form-label"> {selectedData.telefono1}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Local:</label> <label className="form-label"> {selectedData.local}</label>
                   </Col>
                   <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Email:</label> <label className="form-label"> {selectedData.email}</label>
@@ -130,6 +173,9 @@ function VerOrdenUser() {
                   <Col xs={8}>
                   <label className="form-label fw-bold">Email Emergencia:</label> <label className="form-label"> {selectedData.correoEmergencia}</label>
                   </Col>
+                  <Col xs={8}>
+                  <label className="form-label fw-bold">Vendedor:</label> <label className="form-label"> {selectedData.vendedor}</label>
+                  </Col>
                   </Row>
                   <Row>
                   <Col xs={4} md={4}>
@@ -137,6 +183,9 @@ function VerOrdenUser() {
                   </Col>
                   <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Motor:</label> <label className="form-label"> {selectedData.motor}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Año:</label> <label className="form-label"> {selectedData.anio}</label>
                   </Col>
                   <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Marca:</label> <label className="form-label"> {selectedData.marca}</label>
@@ -159,7 +208,13 @@ function VerOrdenUser() {
                   <label className="form-label fw-bold">Financiera:</label> <label className="form-label"> {selectedData.financiera}</label>
                   </Col>
                   <Col xs={4} md={4}>
-                  <label className="form-label fw-bold">Vendedor:</label> <label className="form-label"> {selectedData.vendedor}</label>
+                  <label className="form-label fw-bold">Valor:</label> <label className="form-label"> {selectedData.valor} $</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Factura a nombre de:</label> <label className="form-label"> {selectedData.facturaNombre}</label>
+                  </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">Ruc:</label> <label className="form-label"> {selectedData.ruc}</label>
                   </Col>
                   </Row>
             </Container>

@@ -6,7 +6,10 @@
     align-items: center;
   }
   
-    
+  .custom-textfield {
+    height: 20px; /* Ajusta la altura según tus preferencias */
+  }
+
   th {
     border-bottom: 1px solid black;
   }
@@ -14,3 +17,25 @@
   td {
     text-align: center;
   }
+
+  .pageNumbers {
+    list-style: none;
+    display: flex;
+  }
+  
+  .pageNumbers li {
+    padding: 10px;
+    border: 1.8px solid black;
+    cursor: pointer;
+    border-radius: 8px;
+  }  
+
+  .pageNumbers li.active{
+    background-color: #ffc107;
+    color: black;
+  }
+
+
+  .pageNumbers li button:hover {
+    background-color: #ffc107;
+  }  

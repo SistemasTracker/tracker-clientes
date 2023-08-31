@@ -1,16 +1,18 @@
 import React from 'react';
 import '../assets/css/formulario.css';
 import {FormControl} from "react-bootstrap";
-import {FaUserAlt,FaMapMarked,FaCalendarAlt,FaUserTie,FaPhone,FaEnvelope,FaRegBookmark} from 'react-icons/fa';
+import {FaUserAlt,FaMapMarked,FaCalendarAlt,FaUserTie,FaPhone,FaEnvelope,FaRegBookmark, FaStore} from 'react-icons/fa';
 import {Form, Formik} from 'formik';
 //Naavegador de páginas
 import { crearOrden } from '../services/apiRest.js';
 //Guardar token
 import LOGO from '../assets/images/LOGO.png';
+import { Link } from 'react-router-dom';
+import { Col, Container, Row } from 'react-bootstrap-v5';
 
 function FormularioOrdenCliente() {
 
-  const idUsuario = 3;
+  const idUsuario = 1;
 
 return (
   <Formik initialValues={
@@ -32,7 +34,12 @@ return (
       color:"",
       idusuario: idUsuario,
       plan:1,
-      financiera:""
+      financiera:"",
+      anio:"",
+      local:"",
+      valor:"",
+      facturaNombre:"",
+      ruc:""
     }
   }
   onSubmit={async (values, actions)=>{
@@ -58,10 +65,10 @@ return (
     <img src={LOGO} alt="" width="30" height="24" class="d-inline-block align-text-top"/>
       TRACKER X
     </span>
-    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-      <span className="navbar-toggler-icon"></span>
-    </button>
-  </div>
+    <form className="d-flex">
+              <Link to={"/"} className="btn btn-outline-dark" type="submit">Salir</Link>
+            </form>
+    </div>
 </nav>
   <div className='container border border-3 p-5 my-5'>
   <h3 className='text-center'>FORMULARIO DE ORDEN DE ACTIVACIÓN</h3>
@@ -93,6 +100,11 @@ return (
               <input type="email" className="form-control" name='email' onChange={handleChange} value={values.email} required/>
               <br></br>
             </div>
+            <div className="col-md-4">
+              <label className="form-label fw-bold"><FaStore></FaStore> Consesionario</label>
+              <input type="label" className="form-control" name='local' onChange={handleChange} value={values.local} required/>
+              <br></br>
+            </div>
         </div> 
         <div className='row'>
             <div className="col-md-4">            
@@ -104,7 +116,7 @@ return (
               <input type="label" className="form-control" name='telefono2' onChange={handleChange} value={values.telefono2} required/>
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaEnvelope></FaEnvelope> Email</label>
+              <label className="form-label fw-bold"><FaEnvelope></FaEnvelope> Email de Emergencia</label>
               <input type="email" className="form-control" name='correoEmergencia' onChange={handleChange} value={values.correoEmergencia} required/>
             </div>
             <div className="col-md-4">
@@ -126,18 +138,22 @@ return (
               <input type="label" className="form-control" name='modelo' onChange={handleChange} value={values.modelo} required/>
             </div>
             <div className="col-md-4">
+              <label className="form-label fw-bold">Año</label>
+              <input type="label" className="form-control" name='anio' onChange={handleChange} value={values.anio} required/>
+            </div>
+            <div className="col-md-4">
             <label className="form-label fw-bold">Placa</label>
               <input type="label" className="form-control" name='placa' onChange={handleChange} value={values.placa} />
             </div>
             <div className="col-md-4">
               <label className="form-label fw-bold">Chasis</label>
               <input type="label" className="form-control" name='chasis' onChange={handleChange} value={values.chasis} required/>
-              <br></br>
+             
             </div>
             <div className="col-md-4">
               <label className="form-label fw-bold">Color</label>
               <input type="label" className="form-control" name='color' onChange={handleChange} value={values.color} required/>
-              <br></br>
+             
             </div>
             <div className="col-md-4">
               <label className="form-label fw-bold">Motor</label>
@@ -145,28 +161,22 @@ return (
               <br></br>
             </div>
        </div>  
-       <div className='row'>  
-       <div className="col-xs-12 bg-warning">
-              <label className="form-label ">SERVICIOS</label>              
-            </div>
-            <div className="col-md-4">
-              <label className="form-label fw-bold">PLAN</label>              
-              <input type="label" className="form-control" name='plan' onChange={handleChange} value={values.plan}/>  
-              <br></br>         
-            </div>
-            <div className="col-md-4">
-              <label className="form-label fw-bold">FINANCIERA</label>
-              <input type="label" className="form-control" name='financiera' onChange={handleChange} value={values.financiera}/>
-              <br></br>  
-            </div>
-       </div> 
        <div className="row justify-content-center">
           <div className='col-md-2'>
-            <button type="submit" className="btn btn-dark"> {isSubmitting ? "Enviandoo....." : "Enviar Orden"}</button>
+            <button type="submit" className="btn btn-dark"> {isSubmitting ? "Enviando....." : "Enviar Orden"}</button>
           </div>
        </div>     
    </Form>
  </div>
+ <footer className="bg-light py-4">
+      <Container>
+        <Row>
+          <Col>
+            <p className="text-center">© 2023 Tracker X. Todos los derechos reservados.</p>
+          </Col>
+        </Row>
+      </Container>
+    </footer>
   </>
 
   )}   

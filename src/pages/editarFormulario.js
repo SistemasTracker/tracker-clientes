@@ -1,76 +1,69 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../assets/css/formulario.css';
 import { FormControl } from "react-bootstrap";
 import {FaUserAlt,FaMapMarked,FaCalendarAlt,FaUserTie,FaPhone,FaEnvelope,FaRegBookmark,FaStore} from 'react-icons/fa';
+import moment from 'moment';
 import {Form, Formik} from 'formik';
 //Naavegador de páginas
 import {useLocation} from 'react-router-dom';
-import { crearOrden } from '../services/apiRest.js';
+import { updateOrden } from '../services/apiRest.js';
 //Guardar token
 import { Link } from 'react-router-dom';
 import LOGO from '../assets/images/LOGO.png';
 import jsPDF from 'jspdf';
-import moment from 'moment';
-import { Button, Col, Container, Modal, Row } from 'react-bootstrap-v5';
-import 'bootstrap/dist/css/bootstrap.min.css';
-//PDF
 
 
-
-function FormularioOrden() {
+function EditarOrden() {
 
   const location = useLocation();
   const idUsuario = location.state.idUsuario;
+  console.log(idUsuario);
   const token = location.state.token;
-  console.log(token);
-  const [show, setShow] =  useState(false);
-  const [show1, setShow1] =  useState(false);
-  const [show2, setShow2] =  useState(false);
-  const handleClose = () => {
-    setShow(false);
-    setShow1(false);
-    setShow2(false);
-  }
+  const orden = location.state.orden;
+  console.log(orden);
 
-  const handleOpen = () => setShow(true);
 
+
+
+
+  
 return (
+
   <Formik initialValues={
     {
-      fecha: "",
-      nombreCliente:"",
-      vendedor:"",
-      direccion:"",
-      telefono1:"",
-      email:"",
-      nombreEmergencia:"",
-      telefono2:"",
-      correoEmergencia:"",
-      chasis:"",
-      motor:"",
-      marca:"",
-      modelo:"",
-      placa:"",
-      color:"",
+      fecha: moment(orden.fecha).locale('en').format(moment.HTML5_FMT.DATE),
+      nombreCliente: orden.nombreCliente,
+      vendedor: orden.vendedor,
+      direccion:orden.direccion,
+      telefono1:orden.telefono1,
+      email:orden.email,
+      nombreEmergencia:orden.nombreEmergencia,
+      telefono2:orden.telefono2,
+      correoEmergencia:orden.correoEmergencia,
+      chasis:orden.chasis,
+      motor:orden.motor,
+      marca:orden.marca,
+      modelo:orden.modelo,
+      placa:orden.placa,
+      color:orden.color,
       idusuario: idUsuario,
-      plan:1,
-      financiera:"",
-      anio:"",
-      local:"",
-      valor:"",
-      facturaNombre:"",
-      ruc:""
+      plan:orden.plan,
+      financiera:orden.financiera,
+      anio:orden.anio,
+      local:orden.local,
+      valor:orden.valor,
+      facturaNombre:orden.facturaNombre,
+      ruc:orden.ruc,
+      estado:orden.estado
     }
   }
   onSubmit={async (values, actions)=>{
-
     console.log(values);
     try {
-        values.fecha = moment(values.fecha).locale('en').format();
-        const response = await crearOrden(values);
+        values.fecha = moment(values.fecha).locale('es').format();
+        const response = await updateOrden(orden.idordenTrabajo,values);
         console.log(response);  
-        setShow1(true);
-        
+        alert('FORMULARIO ACTUALIZADO EXITOSAMENTE');
               var plan1 = values.plan.toString();
               var doc = new jsPDF('portrait','px');
               doc.setDrawColor(0,0,0);
@@ -86,7 +79,7 @@ return (
               doc.text(40,55,'DATOS DEL CLIENTE')
               doc.setFont('Helvertica', 'normal');
               doc.rect(35,60,370,155)
-              doc.text(40,70,'FECHA DE SOLICITUD:'); doc.text(200,70,moment(values.fecha).format(moment.HTML5_FMT.DATE));
+              doc.text(40,70,'FECHA DE SOLICITUD:'); doc.text(200,70, moment(values.fecha).locale('en').format(moment.HTML5_FMT.DATE));
               doc.text(40,85,'VENDEDOR:'); doc.text(200,85, values.vendedor);
               doc.text(40,100,'LOCAL:'); doc.text(200,100, values.local);
               doc.text(40,115,'NOMBRE DEL CLIENTE:'); doc.text(200,115, values.nombreCliente);
@@ -131,44 +124,67 @@ return (
               doc.text(40,480,'CHIP:')
               doc.save('Activacion_'+values.nombreCliente+'.pdf');
             
-              actions.resetForm();
+              actions.resetForm({
+                values: {
+                  fecha: '',
+                  nombreCliente: '',
+                  vendedor: '',
+                  direccion:'',
+                  telefono1:'',
+                  email:'',
+                  nombreEmergencia:'',
+                  telefono2:'',
+                  correoEmergencia:'',
+                  chasis:'',
+                  motor:'',
+                  marca:'',
+                  modelo:'',
+                  placa:'',
+                  color:'',
+                  idusuario: idUsuario,
+                  plan:'',
+                  financiera:'',
+                  anio:'',
+                  local:'',
+                  valor:'',
+                  facturaNombre:'',
+                  ruc:'',
+                  estado:orden.estado
+
+              }});
     } catch (error) {
       console.log(error)
-      setShow2(true);
+      alert('ERROR, FORMULARIO NO ENVIADO');
     }
     
   }}
   >   
   {({handleChange, handleSubmit, values, isSubmitting})=>(
   <>
-   <nav className="navbar navbar-expand-lg navbar-light bg-warning" style={{ position: "fixed", top: 0, width: "100%", zIndex: 100 }}>
+   <nav className="navbar navbar-expand-lg navbar-light bg-warning">
   <div className="container-fluid">
     <span className="navbar-brand" >
-    <img src={LOGO} alt="" width="30" height="24" class="d-inline-block align-text-top"/>
+    <img src={LOGO} alt="" width="30" height="24" className="d-inline-block align-text-top"/>
       TRACKER X
     </span>
     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span className="navbar-toggler-icon"></span>
     </button>
     <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
-    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
       <div className="navbar-nav">
-          <Link className="nav-link" to={"/ordenuser"} state={{token:token, idUsuario: idUsuario}}>Ordenes</Link>  
+          <Link className="nav-link" to={"/orden"} state={{token:token, idUsuario: idUsuario}}>Ordenes</Link>  
       </div>
       </ul>
     
-    <form class="d-flex">
-      <Link to={"/"} class="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
+    <form className="d-flex">
+      <Link to={"/"} className="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
     </form>
     </div>
   </div>
 </nav>
-    
-   <div className='container border border-3 p-5 my-6' style={{ marginTop: '6rem' }}>
-    <Button variant='warning' onClick={handleOpen} style={{float: 'right'}} >¿Tienes alguna duda o necesitas información?</Button>
-    <br></br>
-    <br></br>
-    <h3 className='text-center'><strong> FORMULARIO DE ORDEN DE ACTIVACIÓN</strong></h3>
+   <div className='container border border-3 p-5 my-5'>
+    <h3 className='text-center'>EDITAR ORDEN DE ACTIVACIÓN</h3>
     <br></br>
    <Form className="row" onSubmit={handleSubmit}>
         <div className='row'>
@@ -176,48 +192,48 @@ return (
               <label className="form-label">DATOS DEL CLIENTE</label>
             </div>
             <div className="col-md-4">            
-                <label className="form-label fw-bold" ><FaUserAlt></FaUserAlt> NOMBRE CLIENTE</label>
+                <label className="form-label fw-bold" ><FaUserAlt></FaUserAlt> Nombre de cliente</label>
                 <input type="label" className="form-control" name='nombreCliente' onChange={handleChange} value={values.nombreCliente} required/>                            
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaMapMarked/> DIRECCIÓN</label>
+              <label className="form-label fw-bold"><FaMapMarked/> Dirección</label>
               <input type="label" className="form-control" name='direccion' onChange={handleChange} value={values.direccion} required/>
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaCalendarAlt></FaCalendarAlt> FECHA DE ENVÍO DE ORDEN</label>
+              <label className="form-label fw-bold"><FaCalendarAlt></FaCalendarAlt> Fecha</label>
               <FormControl type="date" name="fecha" onChange={handleChange} value={values.fecha} required/>
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaPhone></FaPhone> TELÉFONO</label>
+              <label className="form-label fw-bold"><FaPhone></FaPhone> Teléfono</label>
               <input type="label" className="form-control" name='telefono1' onChange={handleChange} value={values.telefono1} required/>
               <br></br>
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaEnvelope></FaEnvelope> EMAIL</label>
+              <label className="form-label fw-bold"><FaEnvelope></FaEnvelope> Email</label>
               <input type="email" className="form-control" name='email' onChange={handleChange} value={values.email} required/>
               <br></br>
             </div>
         </div> 
         <div className='row'>
             <div className="col-md-4">            
-            <label className="form-label fw-bold"><FaUserAlt></FaUserAlt> CONTACTO EMERGENCIA</label>
+            <label className="form-label fw-bold"><FaUserAlt></FaUserAlt> Contacto de Emergencia</label>
                 <input type="label" className="form-control" name='nombreEmergencia' onChange={handleChange} value={values.nombreEmergencia}/>                            
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaPhone></FaPhone> TELÉFONO EMERGENCIA</label>
+              <label className="form-label fw-bold"><FaPhone></FaPhone> Teléfono Emergencia</label>
               <input type="label" className="form-control" name='telefono2' onChange={handleChange} value={values.telefono2}/>
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaEnvelope></FaEnvelope> EMAIL</label>
+              <label className="form-label fw-bold"><FaEnvelope></FaEnvelope> Email</label>
               <input type="email" className="form-control" name='correoEmergencia' onChange={handleChange} value={values.correoEmergencia}/>
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaUserTie></FaUserTie> VENDEDOR</label>
+              <label className="form-label fw-bold"><FaUserTie></FaUserTie> Vendedor</label>
               <input type="label" className="form-control" name='vendedor' onChange={handleChange} value={values.vendedor}/>
               <br></br>
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaStore></FaStore> LOCAL</label>
+              <label className="form-label fw-bold"><FaStore></FaStore> Local</label>
               <input type="label" className="form-control" name='local' onChange={handleChange} value={values.local}/>
               <br></br>
             </div>   
@@ -227,32 +243,32 @@ return (
               <label className="form-label ">DATOS DEL VEHÍCULO</label>              
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"><FaRegBookmark></FaRegBookmark> MARCA</label>              
+              <label className="form-label fw-bold"><FaRegBookmark></FaRegBookmark> Marca</label>              
               <input type="label" className="form-control" name='marca' onChange={handleChange} value={values.marca} required/>         
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"> MODELO</label>
+              <label className="form-label fw-bold">Modelo</label>
               <input type="label" className="form-control" name='modelo' onChange={handleChange} value={values.modelo} required/>
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"> AÑO</label>
+              <label className="form-label fw-bold">Año</label>
               <input type="label" className="form-control" name='anio' onChange={handleChange} value={values.anio} required/>
             </div>
             <div className="col-md-4">
-            <label className="form-label fw-bold"> PLACA</label>
+            <label className="form-label fw-bold">Placa</label>
               <input type="label" className="form-control" name='placa' onChange={handleChange} value={values.placa} />
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"> CHASIS</label>
+              <label className="form-label fw-bold">Chasis</label>
               <input type="label" className="form-control" name='chasis' onChange={handleChange} value={values.chasis} required/>
               
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"> COLOR</label>
+              <label className="form-label fw-bold">Color</label>
               <input type="label" className="form-control" name='color' onChange={handleChange} value={values.color} required/>
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold"> MOTOR</label>
+              <label className="form-label fw-bold">Motor</label>
               <input type="label" className="form-control" name='motor' onChange={handleChange} value={values.motor}/>
               <br></br>
             </div>
@@ -289,69 +305,16 @@ return (
        </div> 
        <div className="row justify-content-center">
           <div className='col-md-4'>
-            <Button type="submit" className="btn btn-dark" centered > {isSubmitting ? "Enviando y descargando....." : "Enviar Orden y Descargar Archivo pdf"}</Button>
+            <button type="submit" className="btn btn-dark" > {isSubmitting ? "Actualizando...." : "Actualizar y descargar Orden"}</button>
           </div>
        </div>     
    </Form>
  </div>
- <div>
- <footer className="bg-light py-4" style={{ marginTop: "auto" }}>
-      <Container>
-        <Row>
-          <Col>
-            <p className="text-center">© 2023 Tracker X. Todos los derechos reservados.</p>
-          </Col>
-        </Row>
-      </Container>
-    </footer>
-    </div>
-    <Modal show={show} onHide = {handleClose} centered>
-      <Modal.Header >
-          <Modal.Title>CONTACTOS PARA AYUDA</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <div className='alert alert-info'> 
-        Para solicitar un cambio en la información ingresada - 0987305823
-        </div>
-        <div className='alert alert-secondary'> 
-        Para reportar alguna error o solicitar soporte en el ingreso de datos - 0983367940
-        </div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant='secondary' onClick={handleClose}>
-          Cerrar
-        </Button>
-      </Modal.Footer>
-    </Modal>
-    <Modal show={show1} onHide = {handleClose} centered>
-      <Modal.Body>
-        <div className='alert alert-success'>  
-        FORMULARIO ENVIADO CON ÉXITO
-        </div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant='secondary' onClick={handleClose}>
-          Cerrar
-        </Button>
-      </Modal.Footer>
-    </Modal>
-    <Modal show={show2} onHide = {handleClose} centered>
-      <Modal.Body>
-        <div className='alert alert-danger'>
-        ERROR!! FORMULARIO NO ENVIADO, REVISA LOS DATOS INGRESADOS O COMUNICATE A LOS NÚMEROS DE SOPORTE.
-        </div>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant='secondary' onClick={handleClose}>
-          Cerrar
-        </Button>
-      </Modal.Footer>
-    </Modal>
-    </>
+  </>
 
   )}   
   </Formik>
   )
 }
 
-export default FormularioOrden
+export default EditarOrden

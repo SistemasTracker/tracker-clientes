@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../assets/css/orden.css';
 import { getUsuarios } from '../services/apiRest.js';
-import {Table} from 'react-bootstrap-v5';
+import {Col, Container, Row, Table} from 'react-bootstrap-v5';
 import {useLocation} from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import LOGO from '../assets/images/LOGO.png';
@@ -37,6 +37,7 @@ function Usuarios () {
 
        return (
        <>
+       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
        <nav className="navbar navbar-expand-lg navbar-light bg-warning">
           <div className="container-fluid">
             <span className="navbar-brand">
@@ -47,31 +48,35 @@ function Usuarios () {
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <div className="navbar-nav">
-                
                 <Link className="nav-link" to={"/orden"} state={{token:token}}>Ordenes</Link>
               </div>
+              </ul>
+              <Link to={"/"} className="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
+           
             </div>
-            <form class="d-flex">
-              <Link to={"/"} class="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
-            </form>
           </div>
         </nav>
        <div className='container my-5'>
        <Table className='table table-dark table-hover table-bordered align-middle table-responsive'>
          <thead>
              <tr>
-                 <th>Usuario</th>
-                 <th>Contraseña</th>
-                 <th>Distribuidor</th>
+                 <th>ID</th>
+                 <th>USUARIO</th>
+                 <th>CONTRASEÑA</th>
+                 <th>ORGANIZACIÓN</th>
+                 <th>TELÉFONO</th>
              </tr>
          </thead>
          <tbody>       
                  {currentPosts.map(currentPosts => (
                  <tr className='table-light'>
+                      <td>{currentPosts.idusuariosOrden}</td>
                       <td>{currentPosts.name}</td>
                       <td>{currentPosts.password}</td>
                       <td>{currentPosts.organizacion}</td>
+                      <td>{currentPosts.telefono}</td>
                  </tr>
                  ))}
             
@@ -79,6 +84,16 @@ function Usuarios () {
         </Table>  
         <Pagination postPerPage={postPerPage} totalPosts={users.length} paginate={paginate}></Pagination>
        </div>
+       <footer className="bg-light py-4 mt-auto">
+      <Container>
+        <Row>
+          <Col> 
+            <p className="text-center">© 2023 Tracker X. Todos los derechos reservados.</p>
+          </Col>
+        </Row>
+      </Container>
+    </footer>
+    </div>
        </> 
        );
 }
