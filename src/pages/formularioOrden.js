@@ -59,7 +59,9 @@ return (
       local:"",
       valor:"",
       facturaNombre:"",
-      ruc:""
+      ruc:"",
+      imei:"",
+      chip:""
     }
   }
   onSubmit={async (values, actions)=>{
@@ -115,7 +117,7 @@ return (
               doc.text(40,355,'SERVICIOS')
               doc.setFont('Helvertica', 'normal');
               doc.rect(35,360,370,75)
-              doc.text(40,370,'PLAN:'); doc.text(200,370, plan1);
+              doc.text(40,370,'AÑOS DE SERVICIO:'); doc.text(200,370, plan1);
               doc.text(40,385,'VALOR $:'); doc.text(200,385, values.valor);
               doc.text(40,400,'FINANCIERA:'); doc.text(200,400, values.financiera);
               doc.text(40,415,'FACTURA A NOMBRE DE:'); doc.text(200,415, values.facturaNombre);
@@ -126,9 +128,11 @@ return (
               doc.text(40,450,'DATOS DEL DISPOSITIVO')
               doc.setFont('Helvertica', 'normal');
               doc.rect(35,455,370,30)
-              doc.text(40,465,'IMEI:')
+              doc.text(40,465,'IMEI:');doc.text(200,465, values.imei);
               doc.line(35,470,405,470)
               doc.text(40,480,'CHIP:')
+              doc.line(250,525,370,525)
+              doc.text(280,540,'Firma del Cliente')
               doc.save('Activacion_'+values.nombreCliente+'.pdf');
             
               actions.resetForm();
@@ -213,12 +217,12 @@ return (
             </div>
             <div className="col-md-4">
               <label className="form-label fw-bold"><FaUserTie></FaUserTie> VENDEDOR</label>
-              <input type="label" className="form-control" name='vendedor' onChange={handleChange} value={values.vendedor}/>
+              <input type="label" className="form-control" name='vendedor' onChange={handleChange} value={values.vendedor} required/>
               <br></br>
             </div>
             <div className="col-md-4">
               <label className="form-label fw-bold"><FaStore></FaStore> LOCAL</label>
-              <input type="label" className="form-control" name='local' onChange={handleChange} value={values.local}/>
+              <input type="label" className="form-control" name='local' onChange={handleChange} value={values.local} required/>
               <br></br>
             </div>   
        </div>
@@ -265,6 +269,11 @@ return (
               <label className="form-label fw-bold">AÑOS DE SERVICIO</label>              
               <input type="label" className="form-control" name='plan' onChange={handleChange} value={values.plan} required/>  
                    
+            </div>
+            <div className="col-md-4">
+              <label className="form-label fw-bold">IMEI DEL DISPOSITIVO</label>
+              <input type="label" className="form-control" name='imei' onChange={handleChange} value={values.imei}/>
+              <br></br>
             </div>
             <div className="col-md-4">
               <label className="form-label fw-bold">VALOR</label>              

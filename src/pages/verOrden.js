@@ -321,6 +321,9 @@ function VerOrden() {
                   <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Vendedor:</label> <label className="form-label"> {selectedData.vendedor}</label>
                   </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">IMEI:</label> <label className="form-label"> {selectedData.imei}</label>
+                  </Col>
                   </Row>
             </Container>
         </Modal.Body>

@@ -15,7 +15,8 @@ const PruebasLogin = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const [showError, setShowError] = useState(false);
-  const token = 'RjBEAiBbWc2CzNIhhFwpa1aCxnJABCXEVg2ufbnMQMAwDN9VcgIgcQu4ZSmtJjpdLXPaP3zAd2_guakMg3IoiX5MZN_rkPd7InUiOjQwMzQsImUiOiIyMDMwLTA5LTAxVDA1OjAwOjAwLjAwMCswMDowMCJ9';
+  const [token, setToken] = useState('');
+
   
   const iniciarSesion = async (event) => {
     const values = {
@@ -32,7 +33,7 @@ const PruebasLogin = () => {
           xhr.open('GET', `${url}/api/session?token=${token}`, true);
           xhr.onreadystatechange = () => {
             if (xhr.status === 200) {
-              navigate('/pruebasPage', {state: {token: token, tokenO: dataAuth.data.accessToken}})
+              navigate('/pruebasPage', {state: {token: token, tokenO: dataAuth.data.accessToken, email: email, password: password}})
             }else{
               console.error('ERROR EN LA PETICION');
             }
@@ -57,6 +58,7 @@ const PruebasLogin = () => {
         </div>                     
         <input type="text" placeholder="EMAIL" value={email} onChange={(e) => setEmail(e.target.value)} />
         <input type="password" placeholder="CONTRASEÑA" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <input type="text" placeholder="TOKEN" value={token} onChange={(e) => setToken(e.target.value)} />
         <input type="button" className="fadeIn fourth" value="INICIAR SESIÓN" onClick={iniciarSesion}/>         
      </div>
      <br></br>

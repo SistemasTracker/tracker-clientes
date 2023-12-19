@@ -57,3 +57,19 @@ export const getBitacoras = async (id) =>
 
 export const getDeviceImei = async (id, token) =>
     await axios.get(url+`deviceImei/${id}`, {headers:{'Authorization': `${token}`}})
+
+
+export const getUserEmail = async (id, token) =>
+    await axios.get(url+`userEmail/${id}`, {headers:{'Authorization': `${token}`}})
+
+
+export const getUserID = async (id, token) =>
+    await axios.get(url+`userID/${id}`, {headers:{'Authorization': `${token}`}})
+
+
+export const postMantenimiento = async (mantenimiento, token) =>
+    await axios.post(url+`observacion`,  mantenimiento,  {headers:{'Authorization': `${token}`}})
+
+
+export const getMantenimientos = async (id, token) =>
+    await axios.get(url+`observacion/${id}`,  {headers:{'Authorization': `${token}`}})

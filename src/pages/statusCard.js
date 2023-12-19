@@ -11,11 +11,12 @@ import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 // import PublishIcon from '@mui/icons-material/Publish';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import AssistantDirectionIcon from '@mui/icons-material/AssistantDirection';
 import { useLocation } from 'react-router-dom';
 
 // import { snackBarDurationLongMs } from '../util/duration';
 
-const StatusCard = ({ device, estate }) => {
+const StatusCard = ({ device, estate, position }) => {
     const location = useLocation();
     const estado = estate;
 
@@ -73,7 +74,7 @@ const StatusCard = ({ device, estate }) => {
             setOpen(true);
             setTimeout(() => {
                 setOpen(false);
-              }, 2500);
+            }, 2500);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -121,7 +122,7 @@ const StatusCard = ({ device, estate }) => {
             setOpen(true);
             setTimeout(() => {
                 setOpen(false);
-              }, 2500);
+            }, 2500);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -130,7 +131,7 @@ const StatusCard = ({ device, estate }) => {
     const handleUpdatePosition = async () => {
         let newComando;
         if (estado === 'offline') {
-                newComando = "  getrecord";
+            newComando = "  getrecord";
         } else {
             newComando = "getrecord";
         }
@@ -159,7 +160,7 @@ const StatusCard = ({ device, estate }) => {
             setOpen(true);
             setTimeout(() => {
                 setOpen(false);
-              }, 2500);
+            }, 2500);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -197,11 +198,16 @@ const StatusCard = ({ device, estate }) => {
             setOpen(true);
             setTimeout(() => {
                 setOpen(false);
-              }, 2500);
+            }, 2500);
         } catch (error) {
             console.error('Error:', error);
         }
     };
+
+    const googleMaps = (position) => {
+        const link = `https://www.google.com/maps/search/?api=1&query=${position.latitude}%2C${position.longitude}`;
+        window.open(link, '_blank');
+    }
 
     return (
         <>
@@ -232,11 +238,16 @@ const StatusCard = ({ device, estate }) => {
                             </IconButton>
                             {es130 && (
                                 <IconButton
-                                onClick={() => handleAbrirPuertas()}
+                                    onClick={() => handleAbrirPuertas()}
                                 >
                                     <VpnKeyOutlinedIcon />
                                 </IconButton>
                             )}
+                            <IconButton
+                                onClick={() => googleMaps(position)}
+                            >
+                                <AssistantDirectionIcon />
+                            </IconButton>
                         </CardActions>
                     </Paper>
                 )}

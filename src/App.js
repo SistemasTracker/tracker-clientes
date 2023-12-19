@@ -14,6 +14,11 @@ import Eventos from './pages/eventos';
 import Login1 from './pages/login1';
 import PruebasLogin from './pages/pruebasLogin';
 import PruebasPage from './pages/pruebasPage';
+import SubirEquipos from './pages/subirEquipos';
+import UserPanel from './pages/panelUsuario.js';
+import Reportpanel from './pages/panelReportes';
+
+
 
 
 
@@ -30,6 +35,9 @@ function App() {
       <Route path='/pruebasLogin' element={<PruebasLogin></PruebasLogin>}></Route>
       <Route path='/eventos' element={<Eventos></Eventos>}></Route>
       <Route path='/pruebasPage' element={<PruebasPage></PruebasPage>}></Route>
+      <Route path='/subirEquipos' element={<SubirEquipos></SubirEquipos>}></Route>
+      <Route path='/usuariosPage' element={<UserPanel></UserPanel>}></Route>
+      <Route path='/reportesPage' element={<Reportpanel></Reportpanel>}></Route>
       <Route path='*' element={<NotFound></NotFound>}></Route>
       <Route exact path='/formulariocliente' element={<FormularioOrdenCliente></FormularioOrdenCliente>}></Route>     
     </Routes>

@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import LOGO from '../assets/images/LOGO.png';
 import { Link } from 'react-router-dom';
-import { Container, IconButton, List, ListItemButton, ListItemText, Paper, TextField, Typography, Snackbar, Alert } from '@mui/material';
+import { Container, IconButton, List, ListItemButton, ListItemText, Paper, TextField, Typography, Snackbar, Alert, CardActions, Grid } from '@mui/material';
 import Map from '../Map/Map';
+import SatelliteAltIcon from '@mui/icons-material/SatelliteAlt';
+import MapIcon from '@mui/icons-material/Map';
 import { useLocation } from 'react-router-dom';
-import { getDeviceImei } from '../services/apiRest';
+import { getDeviceImei, getMantenimientos, postMantenimiento } from '../services/apiRest';
 import moment from 'moment';
-import { Button, Col, Row } from 'react-bootstrap-v5';
+import { Button, Col, Form, Modal, Row } from 'react-bootstrap-v5';
 import FloatingPanel from './detalles';
+import BuildCircleIcon from '@mui/icons-material/BuildCircle';
 import StatusCard from './statusCard';
+import LinkField from './LinkField';
+import InfoIcon from '@mui/icons-material/Info';
+import alarm from './../assets/music/alert2.mp3';
+
+
 
 
 export default function PruebasPage() {
@@ -17,6 +25,8 @@ export default function PruebasPage() {
   const [imei, setImei] = useState("");
   const tokenO = location.state.tokenO;
   const token = location.state.token;
+  const email = location.state.email;
+  const password = location.state.password;
   const [dispositivos, setDispositivos] = useState([]);
   const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState({});
   const [grupos, setGrupos] = useState([]);
@@ -28,17 +38,15 @@ export default function PruebasPage() {
   const [socket, setSocket] = useState(null);
   const [item, setItem] = useState();
   const [estado, setEstado] = useState('');
+  const [show, setShow] = useState(false);
+  const [show1, setShow1] = useState(false);
+  const [show2, setShow2] = useState(false);
+  const [mantenimientos, setMantenimientos] = useState([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  /*const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };*/
-
+  const [textoIngresado, setTextoIgresado] = useState('');
+  const [desabilitarBoton, setDesabilitarBoton] = useState(false);
 
   const conectarWebSocket = async (dispositivoSeleccionado) => {
-
-
-    //console.log(dispositivoSeleccionado.id);
     const newSocket = new WebSocket(`wss://tracker.com.ec/api/socket`);
     newSocket.onopen = () => {
       console.log("CONECTADO AL WEBSOCKET");
@@ -80,6 +88,7 @@ export default function PruebasPage() {
           if (event.deviceId === dispositivoSeleccionado.id) {
             console.log(event);
             setEvento(event);
+            new Audio(alarm).play()
             setOpenSnackbar(true);
             setTimeout(() => {
               setOpenSnackbar(false);
@@ -106,8 +115,19 @@ export default function PruebasPage() {
 
   async function obtenerDispositivos() {
     const response = await getDeviceImei(imei, tokenO);
+    console.log(response.data.length);
+    if (response.data.length === 0) {
+      setShow(true);
+      setTimeout(() => {
+        setShow(false);
+      }, 6000);
+    }
     setDispositivos(response.data);
+  }
 
+  const handleInputChange = async (event) => {
+    setTextoIgresado(event.target.value);
+    //console.log(textoIngresado)
   }
 
   const insertarKilometraje = async () => {
@@ -137,6 +157,7 @@ export default function PruebasPage() {
       if (!response.ok) {
         throw new Error(`Error al obtener el dispositivo: ${response.statusText}`);
       }
+
       // Parsea la respuesta a JSON
       const data = await response.json();
       // Actualiza el dispositivo seleccionado
@@ -152,6 +173,12 @@ export default function PruebasPage() {
       console.error(error);
     }
   }
+
+  const [tipoMapa, setTipoMapa] = useState('normal'); // Puedes establecer el valor predeterminado según tus necesidades
+
+  const handleTipoMapaChange = (nuevoTipoMapa) => {
+    setTipoMapa(nuevoTipoMapa);
+  };
 
   const obtenerGrupos = async () => {
     await fetch(`${url}/api/groups`, {
@@ -190,8 +217,58 @@ export default function PruebasPage() {
     }
   };
 
+
+  const insertarMantenimiento = async (deviceId, mensaje) => {
+    const mantenimiento = {
+      iddispositivo: deviceId,
+      observacion: mensaje,
+      fecha: moment(new Date()).locale('en').format(),
+
+    }
+    setDesabilitarBoton(true);
+    console.log(mantenimiento);
+    const response = await postMantenimiento(mantenimiento,tokenO);
+    if (response.status === 200) {  
+    setDesabilitarBoton(false);
+    setOpen(true);
+    setTimeout(() => {
+      setOpen(false);
+    }, 3000);
+    setTextoIgresado('');
+    setShow1(false);
+  }
+  }
+
+  const handleShow = () => {
+    setShow1(true);
+  };
+
+  const handleShow2 = (id) => {
+    obtenerMantenimientos(id);
+    setShow2(true);
+  };
+
+  const handleClose = () => {
+    setShow1(false);
+    setShow2(false);
+  };
+
+  const obtenerMantenimientos = async (id) => {
+    try {
+      const response = await getMantenimientos(id,tokenO);
+      // console.log(response.data);
+      if (response.status === 200) {
+        setMantenimientos(response.data);
+        console.log(response.data);
+      }
+    } catch (error) {
+      setMantenimientos([]);
+      //console.log(bitacoras);
+    }
+  }
+
   return (
-    <div style={{  display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       <nav className="navbar navbar-expand-lg navbar-light bg-warning">
         <div className="container-fluid">
           <span className="navbar-brand">
@@ -203,32 +280,54 @@ export default function PruebasPage() {
           </button>
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+              <li className="nav-item">
+                <Link to={"/subirEquipos"} state={{ email: email, password: password, tokenO: tokenO, token: token }} className="nav-link">SUBIR EQUIPOS</Link>
+              </li>
+              <li className="nav-item">
+                <Link to={"/usuariosPage"} state={{ email: email, password: password, tokenO: tokenO, token: token }} className="nav-link">USUARIOS</Link>
+              </li>
+              <li className="nav-item">
+                <Link to={"/reportesPage"} state={{ email: email, password: password, tokenO: tokenO, token: token, url: url }} className="nav-link">REPORTES</Link>
+              </li>
             </ul>
             <Link to={"/pruebasLogin"} className="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
           </div>
         </div>
       </nav>
-      <Container maxWidth="100%" style={{height: '80%'}}>
+      <Container maxWidth="100%">
         <Row>
           <Col sm={6} style={{ marginTop: '10px' }}>
             <Col>
-              <input type="text" placeholder="Buscar cliente" className="search h-50" onChange={e => setImei(e.target.value)} />
-              <IconButton size="small" title='Informacion' onClick={obtenerDispositivos}>
-                BUSCAR
-              </IconButton>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="Buscar cliente"
+                  style={{ height: '30px', marginRight: '10px' }} // Ajusta la altura aquí
+                  onChange={(e) => setImei(e.target.value)}
+                />
+                <IconButton size="small" title="Informacion" onClick={obtenerDispositivos} style={{ height: '30px' }}>
+                  BUSCAR
+                </IconButton>
+              </div>
             </Col>
-            <Paper elevation={3} style={{ maxHeight: '60px', overflow: 'auto', marginTop: '2px' }}>
+            <Paper elevation={3} style={{ maxHeight: '100px', overflow: 'auto', marginTop: '4px' }}>
               <List>
                 {dispositivos.map(device => (
                   <div key={device.id} style={{ display: 'flex', alignItems: 'center' }}>
                     <ListItemButton onClick={() => obtenerDispositivoSeleccionado(device)}>
-                      <ListItemText primary={device.name} secondary={device.uniqueId - device.chasis} />
+                      <ListItemText primary={device.name} secondary={`${device.uniqueId} - ${device.chasis}`} />
+                      <IconButton size="small" title='AGREGAR OBSERVACION DE MANTENIMIENTO' onClick={handleShow}>
+                      <InfoIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton size="small" title='MANTENIMIENTOS' onClick={() => handleShow2(device.id)}>
+                        <BuildCircleIcon fontSize="small" style={{ color: 'black' }} />
+                      </IconButton>
                     </ListItemButton>
                   </div>
                 ))}
               </List>
             </Paper>
-            <Container style={{ border: '2px solid #000', overflow: 'auto', marginTop: '5px' , height: '62%' }} >
+            <Container style={{ border: '2px solid #000', overflow: 'auto', marginTop: '8px', height: '55%' }} >
               <div>
                 <Container style={{ overflow: 'auto', marginTop: '10px' }}>
                   <Typography variant="h6" gutterBottom>
@@ -246,7 +345,7 @@ export default function PruebasPage() {
                       />
                       <TextField
                         value={dispositivoSeleccionado.uniqueId || ''}
-                        onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, uniqueid: event.target.value })}
+                        onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, uniqueId: event.target.value })}
                         label='Imei'
                         style={{
                           width: '48%',
@@ -262,6 +361,20 @@ export default function PruebasPage() {
                           </option>
                         ))}
                       </select>
+                      {dispositivoSeleccionado.id && <LinkField
+                        key={dispositivoSeleccionado.id}
+                        endpointAll={`${url}/api/attributes/computed`}
+                        endpointLinked={`${url}/api/attributes/computed?deviceId=${dispositivoSeleccionado.id}`}
+                        token={token}
+                        url={url}
+                        email={email}
+                        password={password}
+                        baseId={dispositivoSeleccionado.id}
+                        keyBase="deviceId"
+                        keyLink="attributeId"
+                        titleGetter={(it) => it.description}
+                        label='Atributos Calculados'
+                      />}
                       <TextField
                         value={dispositivoSeleccionado.phone || ''}
                         onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, phone: event.target.value })}
@@ -293,7 +406,7 @@ export default function PruebasPage() {
                       <TextField
                         label="Fecha Inicio"
                         type="date"
-                        value={(dispositivoSeleccionado.fechainiciocontrato && moment(dispositivoSeleccionado.fechainiciocontrato).locale('en').format(moment.HTML5_FMT.DATE)) || '2099-01-01'}
+                        value={(dispositivoSeleccionado.fechainiciocontrato && moment(dispositivoSeleccionado.fechainiciocontrato).locale('en').format(moment.HTML5_FMT.DATE)) || moment().locale('en').format(moment.HTML5_FMT.DATE)}
                         onChange={(e) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, fechainiciocontrato: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format() })}
                         style={{
                           width: '48%',
@@ -303,7 +416,7 @@ export default function PruebasPage() {
                       <TextField
                         label="Fecha Vence"
                         type="date"
-                        value={(dispositivoSeleccionado.fechafincontrato && moment(dispositivoSeleccionado.fechafincontrato).locale('en').format(moment.HTML5_FMT.DATE)) || '2099-01-01'}
+                        value={(dispositivoSeleccionado.fechafincontrato && moment(dispositivoSeleccionado.fechafincontrato).locale('en').format(moment.HTML5_FMT.DATE)) || moment().locale('en').format(moment.HTML5_FMT.DATE)}
                         onChange={(e) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, fechafincontrato: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format() })}
                         style={{
                           width: '48%',
@@ -314,7 +427,7 @@ export default function PruebasPage() {
                       <TextField
                         label="Fecha Recarga"
                         type="date"
-                        value={(dispositivoSeleccionado.fecharecarga && moment(dispositivoSeleccionado.fecharecarga).locale('en').format(moment.HTML5_FMT.DATE)) || '2099-01-01'}
+                        value={(dispositivoSeleccionado.fecharecarga && moment(dispositivoSeleccionado.fecharecarga).locale('en').format(moment.HTML5_FMT.DATE)) || moment().locale('en').format(moment.HTML5_FMT.DATE)}
                         onChange={(e) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, fecharecarga: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format() })}
                         style={{
                           width: '48%',
@@ -411,33 +524,126 @@ export default function PruebasPage() {
           </Col>
           <Col sm={6}>
             <Container >
-              <Row style={{ position: 'relative'}}>
-                <Map currentPosition={currentPosition} />
+              <Row style={{ position: 'relative' }}>
+
+                <Map currentPosition={currentPosition} device={dispositivoSeleccionado} mapType={tipoMapa} />
                 {position && estado && (
-                  <StatusCard device={dispositivoSeleccionado} token={token} estate={estado}/>
+                  <StatusCard device={dispositivoSeleccionado} position={position} token={token} estate={estado} />
                 )}
+                <MapSelector onTipoMapaChange={handleTipoMapaChange} />
                 {position && estado && (
                   <FloatingPanel position={position} estado={estado} />
                 )}
                 {position && evento && (
-                  <Snackbar open={openSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{top
-                  : '14%', right: '40px'}} >
-                  <Alert variant="outlined"  severity="error" sx={{ background:'#ffff'}} >
-                    {evento.attributes.alarm === 'sos' ? 'SOS' : 'CORTE DE CORRIENTE'}
-                  </Alert>
-                </Snackbar>
+                  <Snackbar open={openSnackbar} anchorOrigin={{ vertical: 'top', horizontal: 'right' }} style={{
+                    top
+                      : '14%', right: '40px'
+                  }} >
+                    <Alert variant="outlined" severity="error" sx={{ background: '#ffff' }} >
+                      {evento.attributes.alarm === 'sos' ? 'SOS' : 'CORTE DE CORRIENTE'}
+                    </Alert>
+                  </Snackbar>
                 )}
-              </Row>             
+              </Row>
             </Container>
           </Col>
         </Row>
       </Container>
+      <Snackbar open={show} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} style={{
+        top
+          : '14%', right: '40px'
+      }} >
+        <Alert variant="outlined" severity="warning" sx={{ background: '#ffff' }} >
+          DISPOSITIVO NO ENCONTRADO
+        </Alert>
+      </Snackbar>
       <Snackbar
         open={open}
         autoHideDuration={2000}
         message="INGRESO EXITOSO"
       />
+      <Modal show={show1} onHide={handleClose} size='xs' aria-labelledby='contained
+      -modal-tittle-vcenter' centered>
+        <Modal.Header>
+          <Modal.Title id='contained-modal-tittle-vcenter'>
+            AGREGAR OBSERVACION DE MANTENIMIENTO
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Container>
+            <Form>
+              <Form.Group className='mb-3' controlId='example'>
+                <Form.Label>
+                  Ingrese la observacion
+                </Form.Label>
+                <Form.Control as="textarea" onChange={handleInputChange} value={textoIngresado}>
+                </Form.Control>
+              </Form.Group>
+              <Container style={{ display: 'flex', alignItems: 'center' }}>
+                <Button variant='warning' disabled={desabilitarBoton} onClick={() => (insertarMantenimiento(dispositivoSeleccionado.id, textoIngresado))}>
+                  GUARDAR
+                </Button>
+              </Container>
+            </Form>
+          </Container>
+        </Modal.Body>
+      </Modal>
+      <Modal show={show2} onHide={handleClose} size='lg' aria-labelledby='contained-modal-tittle-vcenter' centered>
+        <Modal.Header>
+          <Modal.Title id='contained-modal-tittle-vcenter'>
+            HISTORIAL MANTENIMIENTOS AGENDADOS
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Paper style={{ maxHeight: 200, overflow: 'auto', paddingLeft: '12px' }}>
+            <List>
+              {mantenimientos.map(mantenimiento => (
+                <ListItemText>
+                  <Grid container spacing={2}>
+                    <Grid item xs={3} sx={{ borderRight: '2px solid #ccc' }}>
+                      <Typography>
+                        <strong>{moment.utc(mantenimiento.fecha).format('YYYY-MM-DD | HH:mm')}</strong>
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={8}>
+                      <Typography>
+                        {mantenimiento.observacion}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                </ListItemText>
+              ))}
+            </List>
+          </Paper>
+        </Modal.Body>
+      </Modal>
     </div>
 
   )
+}
+
+function MapSelector({ onTipoMapaChange }) {
+  return (
+    <Paper Paper elevation={5} style={{
+      position: 'absolute',
+      top: '20%',
+      padding: '0px',
+      right: '10px',
+      width: '5%',
+      zIndex: 1000, // Ensure it's above the map
+    }}>
+      <CardActions disableSpacing style={{ flexDirection: 'column' }}>
+        <IconButton
+          onClick={() => onTipoMapaChange('normal')}
+        >
+          <MapIcon />
+        </IconButton>
+        <IconButton
+          onClick={() => onTipoMapaChange('satellite')}
+        >
+          <SatelliteAltIcon />
+        </IconButton>
+      </CardActions>
+    </Paper>
+  );
 }

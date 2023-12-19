@@ -216,6 +216,9 @@ function VerOrdenUser() {
                   <Col xs={4} md={4}>
                   <label className="form-label fw-bold">Ruc:</label> <label className="form-label"> {selectedData.ruc}</label>
                   </Col>
+                  <Col xs={4} md={4}>
+                  <label className="form-label fw-bold">IMEI:</label> <label className="form-label"> {selectedData.imei}</label>
+                  </Col>
                   </Row>
             </Container>
         </Modal.Body>

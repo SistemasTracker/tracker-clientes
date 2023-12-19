@@ -54,6 +54,7 @@ return (
       valor:orden.valor,
       facturaNombre:orden.facturaNombre,
       ruc:orden.ruc,
+      imei:orden.imei,
       estado:orden.estado
     }
   }
@@ -119,7 +120,7 @@ return (
               doc.text(40,450,'DATOS DEL DISPOSITIVO')
               doc.setFont('Helvertica', 'normal');
               doc.rect(35,455,370,30)
-              doc.text(40,465,'IMEI:')
+              doc.text(40,465,'IMEI:');doc.text(200,465, values.imei);
               doc.line(35,470,405,470)
               doc.text(40,480,'CHIP:')
               doc.save('Activacion_'+values.nombreCliente+'.pdf');
@@ -149,6 +150,7 @@ return (
                   valor:'',
                   facturaNombre:'',
                   ruc:'',
+                  imei:'',
                   estado:orden.estado
 
               }});
@@ -300,6 +302,11 @@ return (
             <div className="col-md-4">
               <label className="form-label fw-bold">RUC</label>              
               <input type="label" className="form-control" name='ruc' onChange={handleChange} value={values.ruc}/>  
+              <br></br>         
+            </div>
+            <div className="col-md-4">
+              <label className="form-label fw-bold">IMEI</label>              
+              <input type="label" className="form-control" name='imei' onChange={handleChange} value={values.imei}/>  
               <br></br>         
             </div>
        </div> 

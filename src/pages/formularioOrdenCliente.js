@@ -39,7 +39,9 @@ return (
       local:"",
       valor:"",
       facturaNombre:"",
-      ruc:""
+      ruc:"",
+      imei: "",
+      chip:""
     }
   }
   onSubmit={async (values, actions)=>{
@@ -158,6 +160,16 @@ return (
             <div className="col-md-4">
               <label className="form-label fw-bold">Motor</label>
               <input type="label" className="form-control" name='motor' onChange={handleChange} value={values.motor}/>
+              <br></br>
+            </div>
+            <div className="col-md-4">
+              <label className="form-label fw-bold">Imei</label>
+              <input type="label" className="form-control" name='imei' onChange={handleChange} value={values.imei}/>
+              <br></br>
+            </div>
+            <div className="col-md-4">
+              <label className="form-label fw-bold">Chip de dispositivo</label>
+              <input type="label" className="form-control" name='chip' onChange={handleChange} value={values.chip}/>
               <br></br>
             </div>
        </div>  
