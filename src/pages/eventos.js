@@ -255,7 +255,7 @@ export default function Eventos() {
           <IconButton size="small" title='HISTORIAL DE BITACORAS' onClick={() => ((handleShow4(group.children[0].deviceId)))}>
             <AssignmentIcon fontSize="small" style={{ color: 'black' }} />
           </IconButton>
-          <IconButton size="small" title='PALABRA CLAVE' onClick={() => ((handleShow5(group.children[0].deviceId, group.deviceName,1)))}>
+          <IconButton size="small" title='PALABRA CLAVE' onClick={() => ((handleShow5(group.children[0].deviceId, group.deviceName, 1)))}>
             <KeyIcon fontSize="small" style={{ color: 'black' }} />
           </IconButton>
           <IconButton size="small" title='MANTENIMIENTOS' onClick={() => handleShow7(group.children[0].deviceId)}>
@@ -303,7 +303,7 @@ export default function Eventos() {
 
   const handleShow = (device) => {
     setSelectedData(device);
-    handleShow5(device.id,device.name,2);
+    handleShow5(device.id, device.name, 2);
     console.log(device);
     setObservacion(device.model);
     setPlaca(device.placa);
@@ -337,7 +337,7 @@ export default function Eventos() {
       if (response.status === 200) {
         if (response.data.length === 0) {
           setUsuarioB([]);
-          setShow5(true);
+    
         } else {
           for (let i = 0; i < response.data.length; i++) {
             await fetch(`${url}/api/users/${response.data[i].userid}`, {
@@ -350,10 +350,7 @@ export default function Eventos() {
               for (let i = 0; i < primeraPalabra.length; i++) {
                 console.log(primeraPalabra[i]);
                 if (data.name.includes(primeraPalabra[i])) {
-
                   variable = true;
-
-
                 } else {
                   console.log("NO HAY");
                 }
@@ -362,20 +359,23 @@ export default function Eventos() {
               if (variable === true && opc === 2) {
                 setUsuarioB(data);
                 console.log(opc);
-               
-              } 
-              
-              if (variable === true && opc === 1){
+              }
+              if (variable === true && opc === 1) {
                 setUsuarioB(data);
                 console.log(opc);
                 setShow5(true);
               }
-              
+              if (variable === false && opc === 2) {
+                console.log("AFUERAA");
+                setUsuarioB([]);
+                //setShow5(true);
+              } 
               if (variable === false && opc === 1) {
                 console.log("AFUERAA");
                 setUsuarioB([]);
                 setShow5(true);
-              }
+              } 
+              
             }).catch(error => {
               console.log(error);
             })
@@ -486,7 +486,7 @@ export default function Eventos() {
 
   const obtenerMantenimientos = async (id) => {
     try {
-      const response = await getMantenimientos(id,token1);
+      const response = await getMantenimientos(id, token1);
       // console.log(response.data);
       if (response.status === 200) {
         setMantenimientos(response.data);

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import React, { useState, useEffect } from 'react';
 import {
     List,
@@ -22,7 +23,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button, Col, Row } from 'react-bootstrap-v5';
 import moment from 'moment';
 import { getDeviceImei } from '../services/apiRest';
-import RutasPage from '../components/RutasPage';
+import MapRoute from '../Map/MapRoute';
+import GpsFixedIcon from '@mui/icons-material/GpsFixed';
+import LocationSearchingIcon from '@mui/icons-material/LocationSearching';
 
 
 const Reportpanel = () => {
@@ -35,14 +38,21 @@ const Reportpanel = () => {
     const token = location.state.token;
     const use = location.state.email;
     const pass = location.state.password;
+    const admin = location.state.admin;
     const url = location.state.url;
     const [dispositivos, setDispositivos] = useState([]);
     const [dispositivoSeleccionado, setDispositivoSeleccionado] = useState({});
     const [fechaDesde, setFechaDesde] = useState();
     const [fechaHasta, setFechaHasta] = useState('');
+    const [posicionSeleccionada,setPosicionSeleccionada] = useState([]);
     const [ruta, setRuta] = useState([]);
     const [eventos, setEventos] = useState([]);
 
+    const handleBotonClick = (posicion) => {
+        setPosicionSeleccionada(posicion);
+        console.log(posicionSeleccionada);
+      };
+    
     useEffect(() => {
         // Obtener la fecha y hora actual
         const now = new Date();
@@ -105,6 +115,8 @@ const Reportpanel = () => {
     }
 
     const mostrarRuta = async () => {
+        setRuta([]);
+        setPosicionSeleccionada([]);
         const fechaDesdeConTimeZone = moment.utc(fechaDesde).add(5, 'hours').format('YYYY-MM-DDTHH:mm:ss');
         const fechaHastaConTimeZone = moment.utc(fechaHasta).add(5, 'hours').format('YYYY-MM-DDTHH:mm:ss');
 
@@ -120,13 +132,17 @@ const Reportpanel = () => {
             }
 
             const datos = await response.json();
-            console.log(datos);
+           // console.log(datos);
             setRuta(datos);
+            setPosicionSeleccionada(datos[0]);
+         
         } catch (error) {
             console.error('Error de la solicitud:', error);
         }
 
     }
+
+
 
     const mostrarEventos = async () => {
         const fechaDesdeConTimeZone = moment.utc(fechaDesde).add(5, 'hours').format('YYYY-MM-DDTHH:mm:ss');
@@ -166,7 +182,7 @@ const Reportpanel = () => {
                     <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                             <li className="nav-item">
-                                <Link to={"/pruebasPage"} state={{ email: use, password: pass, tokenO: tokenO, token: token }} className="nav-link">PRUEBAS</Link>
+                                <Link to={"/pruebasPage"} state={{ email: use, password: pass, tokenO: tokenO, token: token, admin:admin}} className="nav-link">PRUEBAS</Link>
                             </li>
                         </ul>
 
@@ -188,7 +204,8 @@ const Reportpanel = () => {
                 </div>
                 <div className="content-panel" style={{ flex: '1', padding: '20px' }}>
                     {activePanel === 'rutas' && (
-                        <Container>
+                        <Container >
+                            {ruta && ruta.length > 0  && posicionSeleccionada && <MapRoute posiciones={ruta} posicionSelected={posicionSeleccionada} />}
                             <Col>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
                                     <input
@@ -202,9 +219,9 @@ const Reportpanel = () => {
                                     </IconButton>
 
                                 </div>
-                                <RutasPage user={cliente.id} opcion={2} token={token}></RutasPage>
+                              
                             </Col>
-                            <Paper elevation={3} style={{ maxHeight: '150px', overflow: 'auto', marginTop: '4px' }}>
+                            <Paper elevation={3} style={{ maxHeight: '75px', overflow: 'auto', marginTop: '4px' }}>
                                 <List>
                                     {dispositivos.map(device => (
                                         <div key={device.id} style={{ display: 'flex', alignItems: 'center' }}>
@@ -247,16 +264,18 @@ const Reportpanel = () => {
                                         MOSTRAR REPORTE
                                     </Button>
                                 </Col>
-                            </Row>
+                             
+                            </Row>                      
                             <TableContainer component={Paper} style={{ maxHeight: '100vh', overflow: 'auto', marginTop: '15px' }}>
                                 <Row style={{ alignItems: 'center' }}>
                                     <Typography variant="h4" style={{ textAlign: 'center' }}>
                                         {dispositivoSeleccionado.name}
                                     </Typography>
-                                </Row>
+                                </Row>                                                                                    
                                 <Table stickyHeader>
                                     <TableHead>
                                         <TableRow>
+                                            <TableCell></TableCell>
                                             <TableCell>HORA</TableCell>
                                             <TableCell>VELOCIDAD</TableCell>
                                             <TableCell>LATITUD</TableCell>
@@ -268,9 +287,20 @@ const Reportpanel = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {ruta.map((fila, index) => (
-                                            <TableRow key={index}>
-                                                {/* Agrega aquí las celdas de datos según la estructura de tu objeto */}
+                                    {ruta.map((fila, index) => (
+                                    <TableRow>
+                                    <TableCell style={{ width: '1%',
+                                        paddingLeft: 1}} padding="none">
+                                            {posicionSeleccionada === fila ? (
+                                            <IconButton size="small" onClick={() => handleBotonClick(null)}>
+                                                <GpsFixedIcon fontSize="small" />
+                                            </IconButton>
+                                            ) : (
+                                            <IconButton size="small" onClick={() => handleBotonClick(fila)}>
+                                                <LocationSearchingIcon fontSize="small" />
+                                            </IconButton>
+                                            )}
+                                        </TableCell>
                                                 <TableCell>{moment(fila.deviceTime).format('YYYY-MM-DD | HH:mm:ss')}</TableCell>
                                                 <TableCell>{Math.round(fila.speed * 1.852)} km/h</TableCell>
                                                 <TableCell>{fila.latitude}</TableCell>
@@ -302,8 +332,9 @@ const Reportpanel = () => {
                                         </IconButton>
     
                                     </div>
-                                    <RutasPage user={cliente.id} opcion={2} token={token}></RutasPage>
+                                  
                                 </Col>
+                            
                                 <Paper elevation={3} style={{ maxHeight: '150px', overflow: 'auto', marginTop: '4px' }}>
                                     <List>
                                         {dispositivos.map(device => (

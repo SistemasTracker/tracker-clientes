@@ -21,6 +21,8 @@ const UserPanel = () => {
     const [name, setName] = useState("");
     const use = location.state.email;
     const pass = location.state.password;
+    const admin =  location.state.admin;
+    console.log(admin);
     const [usuarios, setUsuarios] = useState([]);
     const [usuarioselect1, setUsuarioSelect1] = useState([]);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState({
@@ -28,7 +30,7 @@ const UserPanel = () => {
         email: '',
         readonly: false,
         administrator: false,
-        password: '',
+        password: 'tracker1234',
         disabled: false,
         expirationTime: '',
         deviceLimit: 0,
@@ -74,6 +76,7 @@ const UserPanel = () => {
             id: user.id,
             name: user.name,
             email: user.email,
+            phone: user.phone,
             readonly: user.readonly,
             administrator: user.administrator,
             disabled: user.disabled,
@@ -106,7 +109,7 @@ const UserPanel = () => {
                     <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
-                                <Link to={"/pruebasPage"} state={{ email: use, password: pass, tokenO: tokenO, token: token }} className="nav-link">PRUEBAS</Link>
+                                <Link to={"/pruebasPage"} state={{ email: use, password: pass, tokenO: tokenO, token: token, admin:admin }} className="nav-link">PRUEBAS</Link>
                             </li>
                         </ul>
                         <Link to={"/pruebasLogin"} className="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
@@ -127,11 +130,11 @@ const UserPanel = () => {
                 </div>
                 <div className="content-panel" style={{ flex: '1', padding: '20px' }}>
                     {/* Paneles de contenido */}
-                    {creatingUser && (
+                    {creatingUser && admin !== 4 && (
                         <Container maxWidth="100%" style={{ height: '80%' }}>
                             <Row>
                                 <Col style={{ marginTop: '10px' }}>
-                                    <UserPage user={usuarioSeleccionado} setUser={setUsuarioSeleccionado} opcion={1} token={token}></UserPage>
+                                    <UserPage user={usuarioSeleccionado} setUser={setUsuarioSeleccionado} opcion={1} token={token}  admin={admin}></UserPage>
                                 </Col>
                             </Row>
                         </Container>
@@ -161,7 +164,7 @@ const UserPanel = () => {
                                         ))}
                                     </List>
                                 </Paper>
-                                <UserPage user={usuarioselect1} setUser={setUsuarioSelect1} opcion={2} token={token}></UserPage>
+                                <UserPage user={usuarioselect1} setUser={setUsuarioSelect1} opcion={2} token={token}  admin={admin}></UserPage>
                             </Col>
                         </Container>
                     )}

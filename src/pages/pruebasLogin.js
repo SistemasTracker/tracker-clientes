@@ -27,13 +27,13 @@ const PruebasLogin = () => {
       const dataAuth = await authLogin(values);
       const admin = dataAuth.data.admin;
       console.log(dataAuth);
-      if(admin === 3){
+      if(admin === 3 || admin === 4 ){
           const xhr = new XMLHttpRequest();
           xhr.withCredentials = true;
           xhr.open('GET', `${url}/api/session?token=${token}`, true);
           xhr.onreadystatechange = () => {
             if (xhr.status === 200) {
-              navigate('/pruebasPage', {state: {token: token, tokenO: dataAuth.data.accessToken, email: email, password: password}})
+              navigate('/pruebasPage', {state: {token: token, tokenO: dataAuth.data.accessToken, email: email, password: password, admin: admin}})
             }else{
               console.error('ERROR EN LA PETICION');
             }

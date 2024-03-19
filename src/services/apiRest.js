@@ -1,6 +1,6 @@
 import axios from 'axios'; 
-//const url = "https://tracker-clientes.onrender.com/";
-const url = "http://localhost:3001/";
+const url = "https://tracker-clientes.onrender.com/";
+//const url = "http://localhost:3001/";
 
 
 export const getOrden = async(token)=> 
@@ -35,6 +35,14 @@ export const updateEstado = async (estado,id,token) =>
     await axios.patch(url+`orden/${id}`, {estado:estado} ,{ headers:{'Authorization':`${token}`}})
 
 
+export const updateInstalado = async (instalado,id,token) =>
+    await axios.patch(url+`instalado/${id}`, {instalado:instalado} ,{ headers:{'Authorization':`${token}`}})
+    
+
+export const updateCredenciales = async (credenciales,id,token) =>
+    await axios.patch(url+`credenciales/${id}`, {credenciales:credenciales} ,{ headers:{'Authorization':`${token}`}})
+
+    
 export const updateOrden = async (id,orden) =>
     await axios.put(url+`orden/${id}`, orden)
 
@@ -73,3 +81,7 @@ export const postMantenimiento = async (mantenimiento, token) =>
 
 export const getMantenimientos = async (id, token) =>
     await axios.get(url+`observacion/${id}`,  {headers:{'Authorization': `${token}`}})
+
+
+export const postObservacionEliminarOrden = async (solisitud, token) =>
+    await axios.post(url+`eliminarOrden`,  solisitud,  {headers:{'Authorization': `${token}`}})

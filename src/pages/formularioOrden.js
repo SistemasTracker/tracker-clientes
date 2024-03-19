@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import '../assets/css/formulario.css';
-import { FormControl } from "react-bootstrap";
-import {FaUserAlt,FaMapMarked,FaCalendarAlt,FaUserTie,FaPhone,FaEnvelope,FaRegBookmark,FaStore} from 'react-icons/fa';
+import {FaUserAlt,FaMapMarked,FaUserTie,FaPhone,FaEnvelope,FaRegBookmark,FaStore} from 'react-icons/fa';
 import {Form, Formik} from 'formik';
 //Naavegador de páginas
 import {useLocation} from 'react-router-dom';
@@ -15,10 +14,7 @@ import { Button, Col, Container, Modal, Row } from 'react-bootstrap-v5';
 import 'bootstrap/dist/css/bootstrap.min.css';
 //PDF
 
-
-
 function FormularioOrden() {
-
   const location = useLocation();
   const idUsuario = location.state.idUsuario;
   const token = location.state.token;
@@ -31,13 +27,13 @@ function FormularioOrden() {
     setShow1(false);
     setShow2(false);
   }
-
+  
   const handleOpen = () => setShow(true);
 
 return (
   <Formik initialValues={
     {
-      fecha: "",
+      fecha: new Date(),
       nombreCliente:"",
       vendedor:"",
       direccion:"",
@@ -186,10 +182,6 @@ return (
             <div className="col-md-4">
               <label className="form-label fw-bold"><FaMapMarked/> DIRECCIÓN</label>
               <input type="label" className="form-control" name='direccion' onChange={handleChange} value={values.direccion} required/>
-            </div>
-            <div className="col-md-4">
-              <label className="form-label fw-bold"><FaCalendarAlt></FaCalendarAlt> FECHA DE ENVÍO DE ORDEN</label>
-              <FormControl type="date" name="fecha" onChange={handleChange} value={values.fecha} required/>
             </div>
             <div className="col-md-4">
               <label className="form-label fw-bold"><FaPhone></FaPhone> TELÉFONO</label>

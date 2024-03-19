@@ -1,7 +1,6 @@
 import React from 'react';
 import '../assets/css/formulario.css';
-import { FormControl } from "react-bootstrap";
-import {FaUserAlt,FaMapMarked,FaCalendarAlt,FaUserTie,FaPhone,FaEnvelope,FaRegBookmark,FaStore} from 'react-icons/fa';
+import {FaUserAlt,FaMapMarked,FaUserTie,FaPhone,FaEnvelope,FaRegBookmark,FaStore} from 'react-icons/fa';
 import moment from 'moment';
 import {Form, Formik} from 'formik';
 //Naavegador de páginas
@@ -54,7 +53,7 @@ return (
       valor:orden.valor,
       facturaNombre:orden.facturaNombre,
       ruc:orden.ruc,
-      imei:orden.imei,
+      imei:orden.imei != null ? orden.imei : ' ',
       estado:orden.estado
     }
   }
@@ -62,10 +61,12 @@ return (
     console.log(values);
     try {
         values.fecha = moment(values.fecha).locale('es').format();
-        const response = await updateOrden(orden.idordenTrabajo,values);
-        console.log(response);  
+        await updateOrden(orden.idordenTrabajo,values);
+        console.log(values);  
         alert('FORMULARIO ACTUALIZADO EXITOSAMENTE');
               var plan1 = values.plan.toString();
+              var valor1 = values.valor.toString();
+              var imei1 = values.imei.toString();
               var doc = new jsPDF('portrait','px');
               doc.setDrawColor(0,0,0);
               doc.setFillColor(238,201,47)
@@ -110,7 +111,7 @@ return (
               doc.setFont('Helvertica', 'normal');
               doc.rect(35,360,370,75)
               doc.text(40,370,'PLAN:'); doc.text(200,370, plan1);
-              doc.text(40,385,'VALOR $:'); doc.text(200,385, values.valor);
+              doc.text(40,385,'VALOR $:'); doc.text(200,385, valor1);
               doc.text(40,400,'FINANCIERA:'); doc.text(200,400, values.financiera);
               doc.text(40,415,'FACTURA A NOMBRE DE:'); doc.text(200,415, values.facturaNombre);
               doc.text(40,430,'RUC/CI:'); doc.text(200,430, values.ruc);
@@ -120,7 +121,7 @@ return (
               doc.text(40,450,'DATOS DEL DISPOSITIVO')
               doc.setFont('Helvertica', 'normal');
               doc.rect(35,455,370,30)
-              doc.text(40,465,'IMEI:');doc.text(200,465, values.imei);
+              doc.text(40,465,'IMEI:');doc.text(200,465, imei1);
               doc.line(35,470,405,470)
               doc.text(40,480,'CHIP:')
               doc.save('Activacion_'+values.nombreCliente+'.pdf');
@@ -200,10 +201,6 @@ return (
             <div className="col-md-4">
               <label className="form-label fw-bold"><FaMapMarked/> Dirección</label>
               <input type="label" className="form-control" name='direccion' onChange={handleChange} value={values.direccion} required/>
-            </div>
-            <div className="col-md-4">
-              <label className="form-label fw-bold"><FaCalendarAlt></FaCalendarAlt> Fecha</label>
-              <FormControl type="date" name="fecha" onChange={handleChange} value={values.fecha} required/>
             </div>
             <div className="col-md-4">
               <label className="form-label fw-bold"><FaPhone></FaPhone> Teléfono</label>

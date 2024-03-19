@@ -38,6 +38,7 @@ const LinkField = ({
           if (response.ok) {
             const data = await response.json();
             setItems(data);
+            console.log(data);
           } else {
             throw Error(await response.text());
           }

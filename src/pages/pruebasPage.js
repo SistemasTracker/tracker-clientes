@@ -25,6 +25,7 @@ export default function PruebasPage() {
   const [imei, setImei] = useState("");
   const tokenO = location.state.tokenO;
   const token = location.state.token;
+  const admin = location.state.admin;
   const email = location.state.email;
   const password = location.state.password;
   const [dispositivos, setDispositivos] = useState([]);
@@ -145,7 +146,9 @@ export default function PruebasPage() {
   const distanceToMeters = (value) => value * 1000;
 
   const obtenerDispositivoSeleccionado = async (device) => {
-
+    setEstado("");
+    setDispositivoSeleccionado({});
+ 
     try {
       // Realiza la solicitud para obtener el dispositivo
       const response = await fetch(`${url}/api/devices?uniqueId=${device.uniqueId}`, {
@@ -227,16 +230,16 @@ export default function PruebasPage() {
     }
     setDesabilitarBoton(true);
     console.log(mantenimiento);
-    const response = await postMantenimiento(mantenimiento,tokenO);
-    if (response.status === 200) {  
-    setDesabilitarBoton(false);
-    setOpen(true);
-    setTimeout(() => {
-      setOpen(false);
-    }, 3000);
-    setTextoIgresado('');
-    setShow1(false);
-  }
+    const response = await postMantenimiento(mantenimiento, tokenO);
+    if (response.status === 200) {
+      setDesabilitarBoton(false);
+      setOpen(true);
+      setTimeout(() => {
+        setOpen(false);
+      }, 3000);
+      setTextoIgresado('');
+      setShow1(false);
+    }
   }
 
   const handleShow = () => {
@@ -255,7 +258,7 @@ export default function PruebasPage() {
 
   const obtenerMantenimientos = async (id) => {
     try {
-      const response = await getMantenimientos(id,tokenO);
+      const response = await getMantenimientos(id, tokenO);
       // console.log(response.data);
       if (response.status === 200) {
         setMantenimientos(response.data);
@@ -281,13 +284,17 @@ export default function PruebasPage() {
           <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <Link to={"/subirEquipos"} state={{ email: email, password: password, tokenO: tokenO, token: token }} className="nav-link">SUBIR EQUIPOS</Link>
+                {admin !== 4 ? (
+                  <Link to={"/subirEquipos"} state={{ email: email, password: password, tokenO: tokenO, token: token}} className="nav-link">SUBIR EQUIPOS</Link>
+                ) : (
+                  <span className="nav-link disabled">SUBIR EQUIPOS</span>
+                )}
               </li>
               <li className="nav-item">
-                <Link to={"/usuariosPage"} state={{ email: email, password: password, tokenO: tokenO, token: token }} className="nav-link">USUARIOS</Link>
+                <Link to={"/usuariosPage"} state={{ email: email, password: password, tokenO: tokenO, token: token, admin: admin }} className="nav-link">USUARIOS</Link>
               </li>
               <li className="nav-item">
-                <Link to={"/reportesPage"} state={{ email: email, password: password, tokenO: tokenO, token: token, url: url }} className="nav-link">REPORTES</Link>
+                <Link to={"/reportesPage"} state={{ email: email, password: password, tokenO: tokenO, token: token, url: url, admin: admin }} className="nav-link">REPORTES</Link>
               </li>
             </ul>
             <Link to={"/pruebasLogin"} className="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
@@ -316,10 +323,12 @@ export default function PruebasPage() {
                   <div key={device.id} style={{ display: 'flex', alignItems: 'center' }}>
                     <ListItemButton onClick={() => obtenerDispositivoSeleccionado(device)}>
                       <ListItemText primary={device.name} secondary={`${device.uniqueId} - ${device.chasis}`} />
+                      <ListItemText primary="CADUCA" secondary={`${moment(device.fechafincontrato).locale('en').format(moment.HTML5_FMT.DATE)} `} />
+                      <ListItemText primary="CHIP" secondary={`${device.phone} `} />
                       <IconButton size="small" title='AGREGAR OBSERVACION DE MANTENIMIENTO' onClick={handleShow}>
-                      <InfoIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton size="small" title='MANTENIMIENTOS' onClick={() => handleShow2(device.id)}>
+                        <InfoIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton size="small" title='MANTENIMIENTOS' onClick={() => handleShow2(device.id)}>
                         <BuildCircleIcon fontSize="small" style={{ color: 'black' }} />
                       </IconButton>
                     </ListItemButton>
@@ -342,6 +351,7 @@ export default function PruebasPage() {
                         style={{
                           width: '48%',
                         }}
+                        disabled={admin === 4 ? true : false}
                       />
                       <TextField
                         value={dispositivoSeleccionado.uniqueId || ''}
@@ -352,6 +362,7 @@ export default function PruebasPage() {
                           marginLeft: '20px',
                           marginBottom: '10px'
                         }}
+                        disabled={admin === 4 ? true : false}
                       />
                       <select style={{ width: '100%' }} value={dispositivoSeleccionado.groupId} onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, groupId: event.target.value })}>
                         <option value="">Selecciona un grupo</option>
@@ -383,6 +394,7 @@ export default function PruebasPage() {
                           width: '48%',
                           marginTop: '10px'
                         }}
+                        disabled={admin === 4 ? true : false}
                       />
                       <TextField
                         value={dispositivoSeleccionado.contact || ''}
@@ -393,6 +405,7 @@ export default function PruebasPage() {
                           marginTop: '10px',
                           marginLeft: '20px'
                         }}
+                        disabled={admin === 4 ? true : false}
                       />
                       <TextField
                         value={dispositivoSeleccionado.model || ''}
@@ -412,17 +425,19 @@ export default function PruebasPage() {
                           width: '48%',
                           marginTop: '10px',
                         }}
+                        disabled={admin === 4 ? true : false}
                       />
                       <TextField
                         label="Fecha Vence"
                         type="date"
                         value={(dispositivoSeleccionado.fechafincontrato && moment(dispositivoSeleccionado.fechafincontrato).locale('en').format(moment.HTML5_FMT.DATE)) || moment().locale('en').format(moment.HTML5_FMT.DATE)}
-                        onChange={(e) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, fechafincontrato: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format() })}
+                        onChange={(e) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, fechafincontrato: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format(), expirationTime: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format() })}
                         style={{
                           width: '48%',
                           marginTop: '10px',
                           marginLeft: '20px'
                         }}
+                        disabled={admin === 4 ? true : false}
                       />
                       <TextField
                         label="Fecha Recarga"
@@ -472,6 +487,7 @@ export default function PruebasPage() {
                           width: '48%',
                           marginTop: '10px',
                         }}
+                        disabled={admin === 4 ? true : false}
                       />
                       <TextField
                         value={dispositivoSeleccionado.motor || ''}
@@ -482,6 +498,7 @@ export default function PruebasPage() {
                           marginTop: '10px',
                           marginLeft: '20px'
                         }}
+                        disabled={admin === 4 ? true : false}
                       />
                       <TextField
                         value={dispositivoSeleccionado.chasis || ''}
@@ -491,6 +508,7 @@ export default function PruebasPage() {
                           width: '48%',
                           marginTop: '10px',
                         }}
+                        disabled={admin === 4 ? true : false}
                       />
                       {position && (<TextField
                         value={distanceFromMeters(item.totalDistance)}

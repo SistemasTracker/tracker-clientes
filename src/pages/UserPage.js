@@ -18,7 +18,8 @@ import LinkField from './LinkField';
 // Asegúrate de que moment.js esté instalado
 
 
-const UserPage = ({ user, setUser, opcion, token }) => {
+const UserPage = ({ user, setUser, opcion, token, admin }) => {
+  console.log(user);
   const url = 'https://tracker.com.ec';
   const [open, setOpen] = useState(false);
   const formatAlarm = (value) => (value ? prefixString('alarm', value) : '');
@@ -106,6 +107,7 @@ const UserPage = ({ user, setUser, opcion, token }) => {
               style={{
                 width: '32%',
               }}
+              disabled={admin === 4 ? true : false}
             />
             <TextField
               value={user.email || ''}
@@ -115,16 +117,27 @@ const UserPage = ({ user, setUser, opcion, token }) => {
                 width: '32%',
                 marginLeft: '10px'
               }}
+              disabled={admin === 4 ? true : false}
             />
             {opcion === 1 && (<TextField
               type='password'
               onChange={(event) => setUser({ ...user, password: event.target.value })}
               label='Contraseña'
+              value='tracker1234'
               style={{
                 width: '32%',
                 marginLeft: '10px'
               }}
             />)}
+            {opcion === 2 && <TextField
+              value={user.phone || ''}
+              onChange={(event) => setUser({ ...user, phone: event.target.value })}
+              label='Palabra Clave'
+              style={{
+                width: '32%',
+                marginLeft: '10px'
+              }}
+            />}
             <Accordion style={{ marginTop: '10px' }} defaultExpanded>
               <AccordionSummary>
                 <Typography variant="subtitle1">
@@ -141,6 +154,7 @@ const UserPage = ({ user, setUser, opcion, token }) => {
                   }}
                   value={(user.expirationTime && moment(user.expirationTime).locale('en').format(moment.HTML5_FMT.DATE)) || '2099-01-01'}
                   onChange={(e) => setUser({ ...user, expirationTime: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format() })}
+                  disabled={admin === 4 ? true : false}
                 />
                 <TextField
                   type="number"
