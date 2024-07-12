@@ -18,7 +18,7 @@ function FormularioOrden() {
   const location = useLocation();
   const idUsuario = location.state.idUsuario;
   const token = location.state.token;
-  console.log(token);
+  //console.log(token);
   const [show, setShow] =  useState(false);
   const [show1, setShow1] =  useState(false);
   const [show2, setShow2] =  useState(false);
@@ -265,8 +265,6 @@ return (
         <option value="3">3</option>
         <option value="4">4</option>
         <option value="5">5</option>
-        <option value="5">6</option>
-        <option value="5">7</option>
     </select>
 </div>
             <div className="col-md-4">
@@ -356,7 +354,6 @@ return (
       </Modal.Footer>
     </Modal>
     </>
-
   )}   
   </Formik>
   )
