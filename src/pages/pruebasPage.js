@@ -17,8 +17,6 @@ import InfoIcon from '@mui/icons-material/Info';
 import alarm from './../assets/music/alert2.mp3';
 
 
-
-
 export default function PruebasPage() {
 
   const location = useLocation();
@@ -38,7 +36,7 @@ export default function PruebasPage() {
   const [evento, setEvento] = useState(null);
   const [item, setItem] = useState();
   const [estado, setEstado] = useState('');
-  const [show, setShow] = useState(false);
+  //const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
   const [mantenimientos, setMantenimientos] = useState([]);
@@ -100,17 +98,20 @@ export default function PruebasPage() {
   }, [dispositivoSeleccionado]);
   
 
-  async function obtenerDispositivos() {
-    const response = await getDeviceImei(imei, tokenO);
-    console.log(response.data);
-    if (response.data.length === 0) {
-      setShow(true);
-      setTimeout(() => {
-        setShow(false);
-      }, 6000);
+  
+  const obtenerDispositivos = async () => {
+    if (!imei.trim()) {
+      alert('El campo no puede estar vacío');
+      return;
     }
-    setDispositivos(response.data);
-  }
+    try {
+      const response = await getDeviceImei(imei, tokenO);
+      setDispositivos(response.data);
+    } catch (error) {
+      console.error('Error al obtener dispositivos:', error);
+    }
+  };
+
 
   const handleInputChange = async (event) => {
     setTextoIgresado(event.target.value);
@@ -118,7 +119,7 @@ export default function PruebasPage() {
   }
 
   const insertarKilometraje = async () => {
-    console.log(item);
+    //console.log(item);
     const response = await fetch(`${url}/api/devices/${item.deviceId}/accumulators`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
@@ -155,8 +156,6 @@ export default function PruebasPage() {
       setDispositivoSeleccionado(data[0]);
       // Llama a obtenerGrupos
       obtenerGrupos();
-      // Llama a conectarWebSocket después de establecer el dispositivo seleccionado
-
 
     } catch (error) {
       console.error(error);
@@ -242,6 +241,19 @@ export default function PruebasPage() {
     setShow2(false);
   };
 
+
+  // Agregando busqueda con Enter y verificando que no este vacio
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      if (e.target.value.trim() === '') {
+        console.log("El campo no puede estar vacio");
+        /*<Alert variant="outlined" severity="warning" sx={{ background: '#ffff' }} >El campo no puede estar vacío</Alert>*/
+      } else {
+        obtenerDispositivos();
+      }
+    }
+  };
+
   const obtenerMantenimientos = async (id) => {
     try {
       const response = await getMantenimientos(id, tokenO);
@@ -256,8 +268,8 @@ export default function PruebasPage() {
     }
   }
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+  return (  
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'auto' }}>
       <nav className="navbar navbar-expand-lg navbar-light bg-warning">
         <div className="container-fluid">
           <span className="navbar-brand">
@@ -291,19 +303,22 @@ export default function PruebasPage() {
         <Row>
           <Col sm={6} style={{ marginTop: '10px' }}>
             <Col>
+            
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <input
                   type="text"
                   placeholder="Buscar cliente"
                   style={{ height: '30px', marginRight: '10px' }} // Ajusta la altura aquí
                   onChange={(e) => setImei(e.target.value)}
+                  onKeyDown={handleKeyDown} // Agrega el manejador de evento para detectar Enter
                 />
+                
                 <IconButton size="small" title="Informacion" onClick={obtenerDispositivos} style={{ height: '30px' }}>
                   BUSCAR
                 </IconButton>
               </div>
             </Col>
-            <Paper elevation={3} style={{ maxHeight: '100px', overflow: 'auto', marginTop: '4px' }}>
+            <Paper style={{ maxHeight: '100px', overflow: 'auto', marginTop: '4px' }}>
               <List>
                 {dispositivos.map(device => (
                   <div key={device.id} style={{ display: 'flex', alignItems: 'center' }}>
@@ -322,8 +337,8 @@ export default function PruebasPage() {
                 ))}
               </List>
             </Paper>
-            <Container style={{ border: '2px solid #000', overflow: 'auto', marginTop: '8px', height: '55%' }} >
-              <div>
+            <Container style={{ border: '2px solid #000', overflow: 'auto', marginTop: '8px', height: '90%' }} >
+              
                 <Container style={{ overflow: 'auto', marginTop: '10px' }}>
                   <Typography variant="h6" gutterBottom>
                     DATOS DEL DISPOSITIVO
@@ -335,7 +350,7 @@ export default function PruebasPage() {
                         onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, name: event.target.value })}
                         label='Nombre'
                         style={{
-                          width: '48%',
+                          width: '40%',
                         }}
                         disabled={admin === 4 ? true : false}
                       />
@@ -377,7 +392,7 @@ export default function PruebasPage() {
                         onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, phone: event.target.value })}
                         label="Nro. Chip"
                         style={{
-                          width: '48%',
+                          width: '40%',
                           marginTop: '10px'
                         }}
                         disabled={admin === 4 ? true : false}
@@ -398,7 +413,7 @@ export default function PruebasPage() {
                         onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, model: event.target.value })}
                         label="Observaciones"
                         style={{
-                          width: '100%',
+                          width: '90%',
                           marginTop: '10px',
                         }}
                       />
@@ -408,8 +423,8 @@ export default function PruebasPage() {
                         value={(dispositivoSeleccionado.fechainiciocontrato && moment(dispositivoSeleccionado.fechainiciocontrato).locale('en').format(moment.HTML5_FMT.DATE)) || moment().locale('en').format(moment.HTML5_FMT.DATE)}
                         onChange={(e) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, fechainiciocontrato: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format() })}
                         style={{
-                          width: '48%',
-                          marginTop: '10px',
+                          width: '40%',
+                          marginTop: '20px',
                         }}
                         disabled={admin === 4 ? true : false}
                       />
@@ -420,7 +435,7 @@ export default function PruebasPage() {
                         onChange={(e) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, fechafincontrato: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format(), expirationTime: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format() })}
                         style={{
                           width: '48%',
-                          marginTop: '10px',
+                          marginTop: '20px',
                           marginLeft: '20px'
                         }}
                         disabled={admin === 4 ? true : false}
@@ -431,8 +446,8 @@ export default function PruebasPage() {
                         value={(dispositivoSeleccionado.fecharecarga && moment(dispositivoSeleccionado.fecharecarga).locale('en').format(moment.HTML5_FMT.DATE)) || moment().locale('en').format(moment.HTML5_FMT.DATE)}
                         onChange={(e) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, fecharecarga: moment(e.target.value, moment.HTML5_FMT.DATE).locale('en').format() })}
                         style={{
-                          width: '48%',
-                          marginTop: '10px',
+                          width: '40%',
+                          marginTop: '20px',
 
                         }}
                       />
@@ -451,7 +466,7 @@ export default function PruebasPage() {
                         onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, aseguradora: event.target.value })}
                         label="Asesor Comercial"
                         style={{
-                          width: '48%',
+                          width: '40%',
                           marginTop: '10px',
                         }}
                       />
@@ -470,7 +485,7 @@ export default function PruebasPage() {
                         onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, color: event.target.value })}
                         label="Color"
                         style={{
-                          width: '48%',
+                          width: '40%',
                           marginTop: '10px',
                         }}
                         disabled={admin === 4 ? true : false}
@@ -491,7 +506,7 @@ export default function PruebasPage() {
                         onChange={(event) => setDispositivoSeleccionado({ ...dispositivoSeleccionado, chasis: event.target.value })}
                         label="Chasis"
                         style={{
-                          width: '48%',
+                          width: '40%',
                           marginTop: '10px',
                         }}
                         disabled={admin === 4 ? true : false}
@@ -515,21 +530,19 @@ export default function PruebasPage() {
                           flexBasis: '33%',
                         },
                       }}>
-                        <Button variant='warning' onClick={() => (handleEdit())}>
+                        <Button style={{ marginTop: "20px"}}  variant='warning' onClick={() => (handleEdit())}>
                           ACTUALIZAR DATOS
                         </Button>
                       </div>
                     </>
                   )}
                 </Container>
-              </div>
+              
             </Container>
-
           </Col>
           <Col sm={6}>
-            <Container >
+            <Container   >
               <Row style={{ position: 'relative' }}>
-
                 <Map currentPosition={currentPosition} device={dispositivoSeleccionado} mapType={tipoMapa} />
                 {position && estado && (
                   <StatusCard device={dispositivoSeleccionado} position={position} token={token} estate={estado} />
@@ -553,7 +566,7 @@ export default function PruebasPage() {
           </Col>
         </Row>
       </Container>
-      <Snackbar open={show} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} style={{
+      <Snackbar open={false} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} style={{
         top
           : '14%', right: '40px'
       }} >
@@ -628,14 +641,15 @@ export default function PruebasPage() {
 
 function MapSelector({ onTipoMapaChange }) {
   return (
-    <Paper Paper elevation={5} style={{
+    //Elimino error paper
+    <Paper  style={{
       position: 'absolute',
       top: '20%',
       padding: '0px',
       right: '10px',
       width: '5%',
       zIndex: 1000, // Ensure it's above the map
-    }}>
+      }}>
       <CardActions disableSpacing style={{ flexDirection: 'column' }}>
         <IconButton
           onClick={() => onTipoMapaChange('normal')}

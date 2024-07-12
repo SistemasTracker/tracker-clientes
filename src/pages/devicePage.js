@@ -33,7 +33,7 @@ function DevicePage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Aquí puedes manejar el envío del formulario
-    console.log(formData);
+    //console.log(formData);
   };
 
   return (

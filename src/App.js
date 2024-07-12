@@ -20,8 +20,6 @@ import Reportpanel from './pages/panelReportes';
 
 
 
-
-
 function App() {
   return (
     <Routes>
