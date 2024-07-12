@@ -64,7 +64,7 @@ return (
   <nav className="navbar navbar-expand-lg navbar-light bg-warning">
   <div className="container-fluid">
     <span className="navbar-brand">
-    <img src={LOGO} alt="" width="30" height="24" class="d-inline-block align-text-top"/>
+    <img src={LOGO} alt="" width="30" height="24" className="d-inline-block align-text-top"/>
       TRACKER X
     </span>
     <form className="d-flex">
