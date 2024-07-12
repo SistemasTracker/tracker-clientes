@@ -110,17 +110,16 @@ function VerOrdenUser() {
             </tr>
         </thead>
         <tbody>       
-                {currentPosts.map(currentPosts => (
-                <tr className='table-light'>
+                {currentPosts.map((currentPosts,i) => (
+                <tr className='table-light' key={i}>
                      <td>{currentPosts.nombreCliente}</td>
                      <td>{moment(currentPosts.fecha).locale('es').format(moment.HTML5_FMT.DATE)}</td>
                      <td>{currentPosts.telefono1}</td>
                      { !currentPosts.estado ? <td className='table-active table-danger'>POR CREAR</td>:<td className='table-success'>CREADO</td>}
-                     <td><Button className='btn btn-secondary' onClick={(e)=>showDetail(currentPosts.idordenTrabajo)}>VER DATOS</Button>
+                     <td key={currentPosts.id}><Button className='btn btn-secondary' onClick={(e)=>showDetail(currentPosts.idordenTrabajo)}>VER DATOS</Button>
                      {/*{' '} <Link to={"/editar"} class="btn btn-primary" type="submit" state={{token:token, orden: currentPosts,  idUsuario:idUsuario}}>EDITAR</Link>*/} </td>                   
                 </tr>
                 ))}
-           
         </tbody>
        </Table>  
        <Pagination postPerPage={postPerPage} totalPosts={ordenes.length} paginate={paginate}></Pagination>

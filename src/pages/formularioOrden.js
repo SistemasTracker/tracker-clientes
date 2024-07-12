@@ -295,7 +295,7 @@ return (
        </div> 
        <div className="row justify-content-center">
           <div className='col-md-4'>
-            <Button type="submit" className="btn btn-dark" centered > {isSubmitting ? "Enviando y descargando....." : "Enviar Orden y Descargar Archivo pdf"}</Button>
+            <Button type="submit" className="btn btn-dark"  > {isSubmitting ? "Enviando y descargando....." : "Enviar Orden y Descargar Archivo pdf"}</Button>
           </div>
        </div>     
    </Form>
