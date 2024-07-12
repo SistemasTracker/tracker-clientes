@@ -258,10 +258,15 @@ return (
               <label className="form-label ">SERVICIOS</label>              
             </div>
             <div className="col-md-4">
-              <label className="form-label fw-bold">AÑOS DE SERVICIO</label>              
-              <input type="label" className="form-control" name='plan' onChange={handleChange} value={values.plan} required/>  
-                   
-            </div>
+    <label className="form-label fw-bold">AÑOS DE SERVICIO</label>
+    <select className="form-select" name="plan" onChange={handleChange} value={values.plan} required>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+    </select>
+</div>
             <div className="col-md-4">
               <label className="form-label fw-bold">IMEI DEL DISPOSITIVO</label>
               <input type="label" className="form-control" name='imei' onChange={handleChange} value={values.imei}/>

@@ -56,8 +56,8 @@ export default function Eventos() {
   const [show6, setShow6] = useState(false);
   const [show7, setShow7] = useState(false);
   const [open, setOpen] = useState(false);
+  const [opensnackbitacora, setOpenSnackBitacora] = useState(false);
   const [token1, setToken1] = useState('');
-  const [desabilitarBoton, setDesabilitarBoton] = useState(false);
   const [selectedData, setSelectedData] = useState({});
   const [info, setInfo] = useState(position);
   const [novedades, setNovedades] = useState([]);
@@ -83,12 +83,6 @@ export default function Eventos() {
     socket.onopen = () => {
       console.log("CONECTADO AL WEBSOCKET");
     }
-
-    socket.onclose = () => {
-      console.log('Socket closed');
-      setShow6(true);
-
-    };
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.events) {
@@ -102,6 +96,13 @@ export default function Eventos() {
 
     socket.onerror = (error) => {
       console.error('Error en la conexión del socket:', error);
+    };
+
+    
+    socket.onclose = () => {
+      console.log('Socket closed');
+      setShow6(true);
+
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -433,18 +434,19 @@ export default function Eventos() {
   // POST GET BITACORAS NOVEDADES
 
   const insertarNovedad = async (novedad) => {
-    setDesabilitarBoton(true);
     const response = await postNovedad(novedad);
-    //console.log(novedad);
+    console.log('INSERTANDO NOVEDAD');
     if (response.status === 200) {
+      console.log(novedad + 'INGRESADA');
       setNovedadIngresada('');
-      setDesabilitarBoton(false);
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
-      }, 3000);
+      }, 5000);
       setShow3(false);
       obtenerNovedades();
+    } else {
+      console.log( 'ERROR EN EL INGRESO');
     }
   }
 
@@ -454,17 +456,17 @@ export default function Eventos() {
       fecha: moment(new Date()).locale('en').format(),
       mensaje: mensaje
     }
-    setDesabilitarBoton(true);
+    setOpenSnackBitacora(true);
     const response = await postBitacora(bitacora);
     // console.log(bitacora);
     if (response.status === 200) {
+      setOpenSnackBitacora(false);
       const name = devices.find(device => device.id === deviceId)?.name;
       groupedRows.map((group) => (group.id === name ? deleteAllEventsFromDevice(group.children.map((child) => child.id)) : null));
-      setDesabilitarBoton(false);
       setOpen(true);
       setTimeout(() => {
         setOpen(false);
-      }, 3000);
+      }, 5000);
       setShow2(false);
       setTextoIgresado('');
     }
@@ -695,7 +697,7 @@ export default function Eventos() {
                 <Form.Control as="textarea" onChange={handleInputChange} value={textoIngresado}>
                 </Form.Control>
               </Form.Group>
-              <Button disabled={desabilitarBoton} onClick={() => (insertarBitacora(deviceSeleccionado, textoIngresado))}>
+              <Button onClick={() => (insertarBitacora(deviceSeleccionado, textoIngresado))}>
                 GUARDAR
               </Button>
             </Form>
@@ -720,7 +722,7 @@ export default function Eventos() {
                 </Form.Control>
               </Form.Group>
               <Container style={{ display: 'flex', alignItems: 'center' }}>
-                <Button disabled={desabilitarBoton} variant='warning' onClick={() => (insertarNovedad(novedadIngresada))}>
+                <Button variant='warning' onClick={() => (insertarNovedad(novedadIngresada))}>
                   GUARDAR
                 </Button>
               </Container>
@@ -810,9 +812,24 @@ export default function Eventos() {
       </Modal>
       <Snackbar
         open={open}
-        autoHideDuration={2000}
+        autoHideDuration={5000}
         message="INGRESO EXITOSO"
       />
+      <div style={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Snackbar
+        open={opensnackbitacora}
+        autoHideDuration={3000}
+        message="INGRESANDO BITACORA ESPERE...."
+        ContentProps={{
+          sx: {
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          },
+        }}
+      />
+    </div>
     </>
   )
 }

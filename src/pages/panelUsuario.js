@@ -7,6 +7,8 @@ import {
     IconButton,
     Paper,
     ListItemButton,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import LOGO from '../assets/images/LOGO.png';
 import { Link, useLocation } from 'react-router-dom';
@@ -22,7 +24,7 @@ const UserPanel = () => {
     const use = location.state.email;
     const pass = location.state.password;
     const admin =  location.state.admin;
-    console.log(admin);
+    const [show, setShow] = useState();
     const [usuarios, setUsuarios] = useState([]);
     const [usuarioselect1, setUsuarioSelect1] = useState([]);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState({
@@ -66,17 +68,24 @@ const UserPanel = () => {
 
     async function obtenerUsuarios() {
         const response = await getUserEmail(name, tokenO);
+        console.log(response.data);
+        if (response.data.length === 0) {
+            setShow(true);
+            setTimeout(() => {
+              setShow(false);
+            }, 3000);
+          }
         setUsuarios(response.data);
 
     }
 
     const obtenerUsuarioSeleccionado = async (user) => {
-        console.log(user);
         setUsuarioSelect1({
             id: user.id,
             name: user.name,
             email: user.email,
             phone: user.phone,
+            attributes: JSON.parse(user.attributes),
             readonly: user.readonly,
             administrator: user.administrator,
             disabled: user.disabled,
@@ -170,6 +179,14 @@ const UserPanel = () => {
                     )}
                 </div>
             </div>
+            <Snackbar open={show} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} style={{
+                top
+                : '14%', right: '40px'
+            }} >
+                <Alert variant="outlined" severity="warning" sx={{ background: '#ffff' }} >
+                USUARIO NO ENCONTRADO
+                </Alert>
+            </Snackbar>
         </div>
     );
 };

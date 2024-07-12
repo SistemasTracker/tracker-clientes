@@ -54,7 +54,9 @@ return (
       facturaNombre:orden.facturaNombre,
       ruc:orden.ruc,
       imei:orden.imei != null ? orden.imei : ' ',
-      estado:orden.estado
+      estado:orden.estado,
+      instalado:orden.instalado,
+      credenciales:orden.credenciales
     }
   }
   onSubmit={async (values, actions)=>{
@@ -152,7 +154,9 @@ return (
                   facturaNombre:'',
                   ruc:'',
                   imei:'',
-                  estado:orden.estado
+                  estado:orden.estado,
+                  instalado:orden.instalado,
+                  credenciales:orden.credenciales
 
               }});
     } catch (error) {

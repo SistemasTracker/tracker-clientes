@@ -55,11 +55,11 @@ function VerOrden() {
   const ordenesFiltradas = ordenes.filter((orden) => {
     //console.log(orden.local);
     const ordenLocal = orden.local.toLowerCase();
-    if (filtros.daule && ordenLocal.includes('daule') && filtros.nocreado && (orden.estado === 0 || orden.credenciales === 0)) {
+    if (filtros.daule && ordenLocal.includes('daule') && filtros.nocreado && orden.estado === 0 ) {
       console.log('contiene daule')
       return true;
     }
-    else if (filtros.daule && ordenLocal.includes('daule') && filtros.creado && orden.estado === 1 && orden.credenciales === 1) {
+    else if (filtros.daule && ordenLocal.includes('daule') && filtros.creado && orden.estado === 1 ) {
       console.log('contiene daule')
       return true;
     }
@@ -67,10 +67,10 @@ function VerOrden() {
       console.log('contiene daule')
       return true;
     }
-    else if (filtros.creado && orden.estado === 1 && orden.credenciales === 1 && !filtros.daule && !ordenLocal.includes('daule')) {
+    else if (filtros.creado && orden.estado === 1  && !filtros.daule && !ordenLocal.includes('daule')) {
       return true;
     }
-    else if (filtros.nocreado && (orden.estado === 0 || orden.credenciales === 0) && !filtros.daule && !ordenLocal.includes('daule')) {
+    else if (filtros.nocreado && orden.estado === 0 && !filtros.daule && !ordenLocal.includes('daule')) {
       return true;
     }
     return false;
@@ -272,22 +272,22 @@ function VerOrden() {
                   <th>Usuario</th>
                   <th>Chasis</th>
                   <th>Estado</th>
-                  <th>Credenciales</th>
+                 
                   <th>Acción</th>
                 </tr>
               </thead>
               <tbody>
                 {currentPosts.map(currentPost => (
-                  <tr className={!currentPost.instalado ? 'table-light' : 'table-primary'} key={currentPost.idordenTrabajo} onClick={() => showDetail(currentPost.idordenTrabajo)}>
+                  <tr className={!currentPost.instalado ? 'table-light' : 'table-primary'} key={currentPost.idordenTrabajo} >
                     <td>{currentPost.nombreCliente}</td>
                     <td>{currentPost.local}</td>
                     <td>{currentPost.chasis}</td>
                     {(!currentPost.estado && currentPost.estado !== 3) ? <td className='table-active table-danger'>POR CREAR</td> : <td className='table-success'>CREADO</td>}
-                    {(!currentPost.credenciales) ? <td className='table-active table-danger'>SIN CREDENCIALES</td> : <td className='table-success'>CREDENCIALES</td>}
+      
                     <td>
                       <IconButton onClick={(e) => { e.stopPropagation(); actualizarEstados(currentPost.estado === 1 ? 0 : 1, currentPost.idordenTrabajo, 1) }} title="CREAR"><CheckBoxIcon fontSize="medium" /></IconButton>
                       <IconButton onClick={(e) => { e.stopPropagation(); actualizarEstados(currentPost.instalado === 1 ? 0 : 1, currentPost.idordenTrabajo, 2) }} title="INSTALAR"><NoCrashIcon fontSize="medium" /></IconButton>
-                      <IconButton onClick={(e) => { e.stopPropagation(); actualizarEstados(currentPost.credenciales === 1 ? 0 : 1, currentPost.idordenTrabajo, 3) }} title="ENVIAR CREDENCIALES"><MarkEmailReadIcon fontSize="medium" /></IconButton>
+                      <IconButton onClick={(e) => { e.stopPropagation(); showDetail(currentPost.idordenTrabajo)} } title="VER DATOS"><MarkEmailReadIcon fontSize="medium" /></IconButton>
                       <Link to={"/editar"} type="submit" state={{ token: tokenO, orden: currentPost, idUsuario: currentPost.idusuario }}><IconButton title="EDITAR">
                         <EditNoteIcon fontSize="medium" />
                       </IconButton></Link>

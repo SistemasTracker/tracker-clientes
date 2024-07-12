@@ -22,6 +22,7 @@ const UserPage = ({ user, setUser, opcion, token, admin }) => {
   console.log(user);
   const url = 'https://tracker.com.ec';
   const [open, setOpen] = useState(false);
+  const [open1, setOpen1] = useState(false);
   const formatAlarm = (value) => (value ? prefixString('alarm', value) : '');
   const prefixString = (prefix, value) => prefix + value.charAt(0).toUpperCase() + value.slice(1);
   
@@ -63,7 +64,10 @@ const UserPage = ({ user, setUser, opcion, token, admin }) => {
         }, 5000);
       }
     } catch (error) {
-      console.log(error);
+      setOpen1(true);
+      setTimeout(() => {
+        setOpen1(false);
+      }, 5000);
     }
   };
 
@@ -333,6 +337,11 @@ const UserPage = ({ user, setUser, opcion, token, admin }) => {
         open={open}
         autoHideDuration={2000}
         message="INGRESO EXITOSO"
+      />
+      <Snackbar
+        open1={open1}
+        autoHideDuration={4000}
+        message="NO INGRESADO, EMAIL YA EXISTE"
       />
     </>
   );

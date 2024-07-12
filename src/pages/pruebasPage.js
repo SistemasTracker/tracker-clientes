@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LOGO from '../assets/images/LOGO.png';
 import { Link } from 'react-router-dom';
 import { Container, IconButton, List, ListItemButton, ListItemText, Paper, TextField, Typography, Snackbar, Alert, CardActions, Grid } from '@mui/material';
@@ -36,7 +36,6 @@ export default function PruebasPage() {
   const [currentPosition, setCurrentPosition] = useState([-78.765061, -1.718326]);
   const [position, setPosition] = useState(null);
   const [evento, setEvento] = useState(null);
-  const [socket, setSocket] = useState(null);
   const [item, setItem] = useState();
   const [estado, setEstado] = useState('');
   const [show, setShow] = useState(false);
@@ -47,76 +46,63 @@ export default function PruebasPage() {
   const [textoIngresado, setTextoIgresado] = useState('');
   const [desabilitarBoton, setDesabilitarBoton] = useState(false);
 
-  const conectarWebSocket = async (dispositivoSeleccionado) => {
+  useEffect(() => {
     const newSocket = new WebSocket(`wss://tracker.com.ec/api/socket`);
+    
     newSocket.onopen = () => {
       console.log("CONECTADO AL WEBSOCKET");
     }
-
+  
     newSocket.onclose = () => {
       console.log('Socket closed');
     };
-
+  
     newSocket.onmessage = (event) => {
-      // const data = JSON.parse(event.data);
       const data = JSON.parse(event.data);
+  
       if (data.devices) {
-        data.devices.forEach((device) => {
-          //console.log(dispositivoSeleccionado);
-          if (device.id === dispositivoSeleccionado.id) {
-            console.log(device);
-            setEstado(device.status);
-          }
-        });
+        const selectedDeviceData = data.devices.find(device => device.id === dispositivoSeleccionado.id);
+        if (selectedDeviceData) {
+          console.log(selectedDeviceData);
+          setEstado(selectedDeviceData.status);
+        }
       }
+  
       if (data.positions) {
-        data.positions.forEach((posicion) => {
-          if (posicion.deviceId === dispositivoSeleccionado.id) {
-            //console.log(posicion);
-            setCurrentPosition([posicion.longitude, posicion.latitude]);
-            setPosition(posicion); // Esperar a que se establezca la posición
-            setItem({
-              deviceId: posicion.deviceId,
-              totalDistance: posicion.attributes.totalDistance
-            });
-          }
-        });
-
+        const selectedDevicePosition = data.positions.find(posicion => posicion.deviceId === dispositivoSeleccionado.id);
+        if (selectedDevicePosition) {
+          console.log(selectedDevicePosition);
+          setCurrentPosition([selectedDevicePosition.longitude, selectedDevicePosition.latitude]);
+          setPosition(selectedDevicePosition);
+          setItem({
+            deviceId: selectedDevicePosition.deviceId,
+            totalDistance: selectedDevicePosition.attributes.totalDistance
+          });
+        }
       }
+  
       if (data.events) {
-        data.events.forEach((event) => {
-          //console.log(dispositivoSeleccionado);
-          if (event.deviceId === dispositivoSeleccionado.id) {
-            console.log(event);
-            setEvento(event);
-            new Audio(alarm).play()
-            setOpenSnackbar(true);
-            setTimeout(() => {
-              setOpenSnackbar(false);
-            }, 6000);
-          }
-        });
+        const selectedDeviceEvent = data.events.find(event => event.deviceId === dispositivoSeleccionado.id);
+        if (selectedDeviceEvent) {
+          setEvento(selectedDeviceEvent);
+          new Audio(alarm).play();
+          setOpenSnackbar(true);
+          setTimeout(() => {
+            setOpenSnackbar(false);
+          }, 6000);
+        }
       }
-
-
     };
-
-    newSocket.onerror = (error) => {
-      console.error('Error en la conexión del socket:', error);
+  
+    return () => {
+      newSocket.close();
     };
-
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.close();
-    }
-
-    // Actualizar el estado del socket con el nuevo socket
-    setSocket(newSocket);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }
+  }, [dispositivoSeleccionado]);
+  
 
   async function obtenerDispositivos() {
     const response = await getDeviceImei(imei, tokenO);
-    console.log(response.data.length);
+    console.log(response.data);
     if (response.data.length === 0) {
       setShow(true);
       setTimeout(() => {
@@ -140,6 +126,7 @@ export default function PruebasPage() {
     });
     console.log(response);
   }
+
 
   const distanceFromMeters = (value) => value / 1000;
 
@@ -169,7 +156,6 @@ export default function PruebasPage() {
       // Llama a obtenerGrupos
       obtenerGrupos();
       // Llama a conectarWebSocket después de establecer el dispositivo seleccionado
-      conectarWebSocket(data[0]);
 
 
     } catch (error) {
