@@ -53,7 +53,6 @@ function VerOrden() {
   }
 
   const ordenesFiltradas = ordenes.filter((orden) => {
-    //console.log(orden.local);
     const ordenLocal = orden.local.toLowerCase();
     if (filtros.daule && ordenLocal.includes('daule') && filtros.nocreado && orden.estado === 0 ) {
       console.log('contiene daule')

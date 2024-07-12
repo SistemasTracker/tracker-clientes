@@ -118,24 +118,18 @@ export default function Eventos() {
   }
 
   const addEvent = (newEvent) => {
-    // Utiliza una función para actualizar el estado
     setEventList((prevList) => {
-      // Utiliza reduce para contar los eventos con el mismo deviceId
       const count = prevList.reduce((count, event) => {
         if (event.deviceId === newEvent.deviceId) {
           return count + 1;
         }
         return count;
       }, 0);
-
-      // console.log(count);
-
-      // Verifica si ya hay 2 eventos con el mismo deviceId
       if (count < 2) {
         newEvent.attributes.alarm === 'sos' ? new Audio(alarm1).play() : new Audio(alarm).play();
         return [newEvent, ...prevList];
       } else {
-        return prevList; // Devuelve el estado sin cambios
+        return prevList; 
       }
     });
   };
@@ -435,7 +429,6 @@ export default function Eventos() {
 
   const insertarNovedad = async (novedad) => {
     const response = await postNovedad(novedad);
-    console.log('INSERTANDO NOVEDAD');
     if (response.status === 200) {
       console.log(novedad + 'INGRESADA');
       setNovedadIngresada('');
@@ -457,6 +450,9 @@ export default function Eventos() {
       mensaje: mensaje
     }
     setOpenSnackBitacora(true);
+    setTimeout(() => {
+      setOpenSnackBitacora(false);
+    }, 5000);
     const response = await postBitacora(bitacora);
     // console.log(bitacora);
     if (response.status === 200) {
