@@ -12,7 +12,17 @@ import { useNavigate } from "react-router-dom";
 //Guardar token
 function Login() {
   const history = useNavigate();
+
   const [showError, setShowError] = useState(false);
+
+  
+  const handlePruebasLogin = () => {
+    history("/pruebasLogin");
+  };
+
+  const handleMonitoreoLogin = () => {
+    history("/login1");
+  };
 
   return (
     <Formik
@@ -81,12 +91,19 @@ function Login() {
                 </p>
               )}
             </div>
-            <br></br>
+            <button  className="fadeIn fourth" onClick={handlePruebasLogin} >
+                Login Pruebas
+              </button>
+              <br></br>
+              <button className="fadeIn fourth" onClick={handleMonitoreoLogin}  >
+                Monitoreo
+              </button>
           </div>
         </>
       )}
     </Formik>
   );
 }
+
 
 export default Login;
