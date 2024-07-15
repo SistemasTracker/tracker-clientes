@@ -113,7 +113,7 @@ export default function Eventos() {
       password: clave
     }
     const dataAuth = await authLogin(values);
-    console.log(dataAuth);
+    //console.log(dataAuth);
     setToken1(dataAuth.data.accessToken);
   }
 

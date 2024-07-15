@@ -1,7 +1,7 @@
+//import MenuItem from '@material-ui/core/MenuItem';
 import React, { useState } from 'react';
 import {
     List,
-    ListItem,
     ListItemText,
     Container,
     IconButton,
@@ -57,6 +57,8 @@ const UserPanel = () => {
         // Si seleccionas 'CREAR USUARIO', establece el usuario seleccionado en un objeto vacío
         if (panelName === 'createUser') {
             setUsuarioSeleccionado({ ...usuarioSeleccionado });
+        }else{
+            console.log("Entro");
         };
     };
 
@@ -68,7 +70,7 @@ const UserPanel = () => {
 
     async function obtenerUsuarios() {
         const response = await getUserEmail(name, tokenO);
-        console.log(response.data);
+        //console.log(response.data);
         if (response.data.length === 0) {
             setShow(true);
             setTimeout(() => {
@@ -119,24 +121,19 @@ const UserPanel = () => {
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         <li className="nav-item">
                                 <Link to={"/pruebasPage"} state={{ email: use, password: pass, tokenO: tokenO, token: token, admin:admin }} className="nav-link">PRUEBAS</Link>
-                            </li>
+                        </li>
+                        <li className='nav-link' onClick={() => handleMenuItemClick('updateUser')}>
+                        MODIFICAR USUARIO
+                        </li>
+                        <li className='nav-link' onClick={() => handleMenuItemClick('createUser')}>
+                        CREAR USUARIO
+                        </li>
                         </ul>
                         <Link to={"/pruebasLogin"} className="btn btn-outline-dark" type="submit">Cerrar Sesión</Link>
                     </div>
                 </div>
             </nav>
             <div style={{ display: 'flex', flex: 1 }}>
-                <div className="left-menu" style={{ flex: '0 0 20%', backgroundColor: 'lightgray' }}>
-                    {/* Menú de opciones en la parte izquierda */}
-                    <List>
-                        <ListItem button onClick={() => handleMenuItemClick('createUser')}>
-                            <ListItemText primary="CREAR USUARIO" />
-                        </ListItem>
-                        <ListItem button onClick={() => handleMenuItemClick('updateUser')}>
-                            <ListItemText primary="MODIFICAR USUARIO" />
-                        </ListItem>
-                    </List>
-                </div>
                 <div className="content-panel" style={{ flex: '1', padding: '20px' }}>
                     {/* Paneles de contenido */}
                     {creatingUser && admin !== 4 && (
