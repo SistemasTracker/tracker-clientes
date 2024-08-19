@@ -282,8 +282,8 @@ export default function PruebasPage() {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       if (e.target.value.trim() === "") {
-        console.log("El campo no puede estar vacio");
-        /*<Alert variant="outlined" severity="warning" sx={{ background: '#ffff' }} >El campo no puede estar vacío</Alert>*/
+        //console.log("El campo no puede estar vacio");
+        <Alert variant="outlined" severity="warning" sx={{ background: '#ffff' }} >El campo no puede estar vacío</Alert>
       } else {
         obtenerDispositivos();
       }
