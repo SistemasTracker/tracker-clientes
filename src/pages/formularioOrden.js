@@ -159,7 +159,6 @@ function FormularioOrden() {
           doc.line(250, 525, 370, 525);
           doc.text(280, 540, "Firma del Cliente");
           doc.save("Activacion_" + values.nombreCliente + ".pdf");
-
           actions.resetForm();
         } catch (error) {
           console.log(error);
@@ -461,6 +460,7 @@ function FormularioOrden() {
                     <option value="3">3</option>
                     <option value="4">4</option>
                     <option value="5">5</option>
+                    <option value="6">6</option>
                   </select>
                 </div>
                 <div className="col-md-4">
