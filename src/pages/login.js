@@ -15,15 +15,6 @@ function Login() {
 
   const [showError, setShowError] = useState(false);
 
-  
-  const handlePruebasLogin = () => {
-    history("/pruebasLogin");
-  };
-
-  const handleMonitoreoLogin = () => {
-    history("/login1");
-  };
-
   return (
     <Formik
       initialValues={{
@@ -78,7 +69,7 @@ function Login() {
                   placeholder="Contraseña"
                   onChange={handleChange}
                 />
-                <input type="submit" className="fadeIn fourth" value="Log In" />
+                <input type="submit" className="fadeIn fourth" value="Ingresar" />
               </Form>
             </div>
             <div>
@@ -91,13 +82,6 @@ function Login() {
                 </p>
               )}
             </div>
-            <button  className="fadeIn fourth" onClick={handlePruebasLogin} >
-                Login Pruebas
-              </button>
-              <br></br>
-              <button className="fadeIn fourth" onClick={handleMonitoreoLogin}  >
-                Monitoreo
-              </button>
           </div>
         </>
       )}
