@@ -7,10 +7,21 @@ name: Deploy to Firebase Hosting
 on:
   push:
     branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+concurrency:
+  group: ci-${{ github.ref}}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x,20.x]
+
     steps:
     - uses: actions/checkout@v4
     - name: Muestra contenido del directorio
