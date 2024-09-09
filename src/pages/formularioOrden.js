@@ -525,21 +525,6 @@ function FormularioOrden() {
               </div>
               <div className="row justify-content-center">
                 <div className="col-md-4">
-                  <Button type="button" className="btn btn-dark"
-                    onClick={() => {
-                      setFieldValue("marca", "");
-                      setFieldValue("modelo", "");
-                      setFieldValue("anio", "");
-                      setFieldValue("imei", "");
-                      setFieldValue("placa", "");
-                      setFieldValue("chasis", "");
-                      setFieldValue("color", "");
-                      setFieldValue("motor", "");
-                    }}>
-                    Limpiar
-                  </Button>
-                </div>
-                <div className="col-md-4">
                   <Button type="submit" className="btn btn-dark">
                     {" "}
                     {isSubmitting
