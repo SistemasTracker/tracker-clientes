@@ -17,7 +17,7 @@ import PruebasPage from './pages/pruebasPage';
 import SubirEquipos from './pages/subirEquipos';
 import UserPanel from './pages/panelUsuario.js';
 import Reportpanel from './pages/panelReportes';
-
+import Crear from './pages/Crear.js'
 
 
 function App() {
@@ -29,6 +29,7 @@ function App() {
       <Route path='/ordenuser' element={<VerOrdenUser></VerOrdenUser>}></Route>
       <Route path='/usuarios' element={<Usuarios></Usuarios>}></Route>
       <Route path='/editar' element={<EditarOrden></EditarOrden>}></Route>
+      <Route path='/crear' element={<Crear></Crear>}></Route>
       <Route path='/login1' element={<Login1></Login1>}></Route>
       <Route path='/pruebasLogin' element={<PruebasLogin></PruebasLogin>}></Route>
       <Route path='/eventos' element={<Eventos></Eventos>}></Route>

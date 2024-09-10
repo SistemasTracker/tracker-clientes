@@ -12,6 +12,8 @@ import Container from 'react-bootstrap/Container';
 import Modal from 'react-bootstrap/Modal';
 import Row from 'react-bootstrap/Row';
 import moment from 'moment';
+import { IconButton } from '@mui/material'
+import EditNoteIcon from '@mui/icons-material/EditNote'
 //import Pagination from '../components/Pagination.js';
 import {FaSearch} from 'react-icons/fa';
 
@@ -117,6 +119,11 @@ function VerOrdenUser() {
                      <td>{currentPosts.telefono1}</td>
                      { !currentPosts.estado ? <td className='table-active table-danger'>POR CREAR</td>:<td className='table-success'>CREADO</td>}
                      <td key={currentPosts.id}><Button className='btn btn-secondary' onClick={(e)=>showDetail(currentPosts.idordenTrabajo)}>VER DATOS</Button>
+                     <Link to={"/crear"}  type="submit" state={{token:token, orden: currentPosts,  idUsuario:idUsuario}}>
+                      <IconButton title='Crear'>
+                        <EditNoteIcon fontSize='small'></EditNoteIcon>
+                      </IconButton>
+                     </Link>
                      {/*{' '} <Link to={"/editar"} class="btn btn-primary" type="submit" state={{token:token, orden: currentPosts,  idUsuario:idUsuario}}>EDITAR</Link>*/} </td>                   
                 </tr>
                 ))}
