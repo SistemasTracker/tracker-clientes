@@ -194,10 +194,10 @@ const Reportpanel = () => {
                 <div className="left-menu" style={{ flex: '0 0 20%', backgroundColor: 'lightgray' }}>
                     {/* Menú de opciones en la parte izquierda */}
                     <List>
-                        <ListItem button onClick={() => handleMenuItemClick('rutas')}>
+                        <ListItem  onClick={() => handleMenuItemClick('rutas')}>
                             <ListItemText primary="RUTAS" />
                         </ListItem>
-                        <ListItem button onClick={() => handleMenuItemClick('eventos')}>
+                        <ListItem  onClick={() => handleMenuItemClick('eventos')}>
                             <ListItemText primary="EVENTOS" />
                         </ListItem>
                     </List>
