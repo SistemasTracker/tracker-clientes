@@ -31,7 +31,7 @@ const StatusCard = ({ device, estate, position }) => {
     }
 
     let url = 'https://tracker.com.ec/api/commands/send';
-    let url1 = 'https://tracker-clientes.onrender.com/soapReq';
+    let url1 = 'https://clientes.tracker.com.ec/soapReq';
 
     const handleLock = async () => {
         let newComando;

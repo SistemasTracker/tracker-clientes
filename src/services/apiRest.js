@@ -1,7 +1,7 @@
 import axios from 'axios'; 
-const url = "https://tracker-clientes.onrender.com/";
+//const url = "https://tracker-clientes.onrender.com/";
+const url = "https://clientes.tracker.com.ec/";
 //const url = "http://localhost:3001/";
-
 
 export const getOrden = async(token)=> 
     await axios.get(url+'ordenes',{headers:{'Authorization': `${token}`}})
