@@ -445,7 +445,7 @@ export default function Eventos() {
 
   const insertarBitacora = async (deviceId, mensaje) => {
     const bitacora = {
-      deviceId: deviceId,
+      deviceId: deviceId,      
       fecha: moment(new Date()).locale('en').format(),
       mensaje: mensaje
     }
@@ -740,7 +740,7 @@ export default function Eventos() {
                   <Grid container spacing={2}>
                     <Grid item xs={3} sx={{ borderRight: '2px solid #ccc' }}>
                       <Typography>
-                        <strong>{moment.utc(bitacora.fecha).format('YYYY-MM-DD | HH:mm')}</strong>
+                        <strong>{moment(bitacora.fecha).format('YYYY-MM-DD | HH:mm')}</strong>
                       </Typography>
                     </Grid>
                     <Grid item xs={8}>
