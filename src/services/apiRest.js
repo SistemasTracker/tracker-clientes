@@ -84,4 +84,4 @@ export const getMantenimientos = async (id, token) =>
 
 
 export const postObservacionEliminarOrden = async (solisitud, token) =>
-    await axios.post(url+`eliminarOrden`,  solisitud,  {headers:{'Authorization': `${token}`}})
+    await axios.delete(url+`eliminarOrden`,  solisitud,  {headers:{'Authorization': `${token}`}})

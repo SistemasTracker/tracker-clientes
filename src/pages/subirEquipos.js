@@ -13,8 +13,8 @@ export default function SubirEquipos(props) {
     const location = useLocation();
     let [dispositivos, setDispositivos] = useState([]);
     let [dispositivosT, setDispositivosT] = useState([]);
-    //const [dispositivoE, setDispositivoE] = useState({});
     let [dipositivossubidos, setdisSubidos] = useState([]);
+    const [mensajes, setMensajes] = useState([]); // Nuevo estado para los mensajes
     const use = location.state.email;
     const pass = location.state.password;
     const token = location.state.token;
@@ -47,6 +47,7 @@ export default function SubirEquipos(props) {
         dispositivosT = [];
         dipositivossubidos = [];
         for (let i = 0; i < data.length; i++) {
+            //Si el tamaño de dispositivos a subir es mayor a 2 dispositivos ingresa
             if (data[i].length > 2) {
                 const disp = dispositivo(data[i][0], data[i][1], '0'+data[i][2], data[i][3]);
                 const dispT = dispositivoT(data[i][0], data[i][1], '0'+data[i][2], data[i][3], data[i][4], 1);
@@ -68,7 +69,7 @@ export default function SubirEquipos(props) {
 
     const obtenerDevice = async (device) => {
         try {
-            const response = await axios.get(`https://tracker.com.ec/api/devices?uniqueId=${device.uniqueId}`, {
+            const response = await axios.get(`${url}/api/devices?uniqueId=${device.uniqueId}`, {
                 auth: {
                     username: use,
                     password: pass
@@ -80,8 +81,6 @@ export default function SubirEquipos(props) {
             console.log(error);
         }
     }
-
-
 
     const agregarDispositivo = async (devices, devicesT) => {
         try {
@@ -96,48 +95,49 @@ export default function SubirEquipos(props) {
                         },
                         body: JSON.stringify(devices[i])
                     });
-                    console.log(response.status);
+
+                    setMensajes(prevMensajes => [...prevMensajes, `Estado de respuesta: ${response.status}`]);
+
                     if (response.status === 200) {
                         const device = await obtenerDevice(devices[i]);
-                        console.log(device.id);
                         let correcto = true;
-                        console.log(devicesT[i].model + ' MODELO DEL DISPOSITIVO');
-                        const atributo = devicesT[i].model === '1' ? 80 : 42;
-                        console.log(atributo);
+
+                        setMensajes(prevMensajes => [...prevMensajes, `${devices[i].deviceId} -> Id del dispositivo`]);
+
+                        const atributo = devicesT[i].model === '1' ? 80 : 42;                        
+                        setMensajes(prevMensajes => [...prevMensajes, `Atributo: ${atributo}`]);
                         const res2 = await agregarAtributoCalculado(device.id, atributo);
-                        if(atributo === 42){
+                        
+                        if (atributo === 42) {
                             await agregarAttibuto130(device);
                         }
-                            console.log(res2.status);
-                            if (res2.status !== 204) {
-                                correcto = false;
-                                console.log('ATRIBUTO NO ASIGNADO')
-                            }
+
+                        setMensajes(prevMensajes => [...prevMensajes, `Respuesta atributo calculado: ${res2.status}`]);
+
+                        if (res2.status !== 204) {
+                            correcto = false;
+                            setMensajes(prevMensajes => [...prevMensajes, 'ATRIBUTO NO ASIGNADO']);
+                        }
 
                         if (correcto) {
-
                             dispositivoSubido(devicesT[i], 3, i);
-                            console.log("INGRESO EXITOSO DE DISPOSITIVO " + i);
+                            setMensajes(prevMensajes => [...prevMensajes, `Ingreso exitoso de dispositivo ${i+1}`]);
                         }
-                       /* dispositivoSubido(devicesT[i], 3, i);
-                        console.log("INGRESO EXITOSO DE DISPOSITIVO " + i);*/
-                        
                     } else {
                         dispositivoSubido(devicesT[i], 2, i);
-                        console.log("INGRESO FALLIDO DE DISPOSITIVO " + i);
+                        setMensajes(prevMensajes => [...prevMensajes, `Ingreso fallido de dispositivo ${i+1}`]);
                     }
                 } catch (error) {
-                    console.log(error);
+                    setMensajes(prevMensajes => [...prevMensajes, `Error: ${error.message}`]);
                 }
                 await delay(180000);
             }
         } catch (error) {
-            console.error('Error al ingresar', error);
+            setMensajes(prevMensajes => [...prevMensajes, `Error al ingresar dispositivos: ${error.message}`]);
         }
 
         setDispositivosT(dipositivossubidos);
     };
-
     
     const agregarAtributoCalculado = async (deviceid, atributeid) => {
         const device_attribute = {
@@ -261,11 +261,17 @@ export default function SubirEquipos(props) {
                                         <td>{device.phone}</td>
                                         <td>{device.groupId}</td>
                                         <td>{device.model}</td>
-                                        {(device.estado === 1 ? <td>POR SUBIR</td> : device.estado === 2 ? <td className='table-danger'>ERROR AL INSERTAR</td> : <td className='table-success'>INSERTADO CORRECTAMENTE</td>)}
+                                        {(device.estado === 1 ? <td >POR SUBIR</td> : device.estado === 2 ? <td className='table-danger'>ERROR AL INSERTAR</td> : <td className='table-success'>INSERTADO CORRECTAMENTE</td>)}
                                     </tr>
                                 ))}
                             </tbody>
                         </Table>
+                    </div>
+                    <h1>Resultados:</h1>
+                    <div>
+                    {mensajes.map((mensaje, index) => (
+                        <p key={index}>{mensaje}</p>
+                    ))}
                     </div>
                 </Container>
             </div>
