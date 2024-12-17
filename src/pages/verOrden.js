@@ -297,13 +297,14 @@ function VerOrden() {
               </tbody>
             </Table>
           </div>
-          <Stack spacing={2}>
+          <Stack spacing={2} >
             <Pagination
               color="warning"
               key={currentPage}
               page={currentPage}
               onChange={handlePageChange}
               count={pageNumbers.length}
+              shape='rounded'
             />
           </Stack>
         </div>

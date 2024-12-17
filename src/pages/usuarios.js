@@ -5,7 +5,8 @@ import {Col, Container, Row, Table} from 'react-bootstrap-v5';
 import {useLocation} from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import LOGO from '../assets/images/LOGO.png';
-import Pagination from '../components/Pagination.js';
+//import Pagination from '../components/Pagination.js';
+import Pagination from '@mui/material/Pagination';
 
 
 function Usuarios () {
@@ -21,19 +22,22 @@ function Usuarios () {
      useEffect(() =>{
        async function cargarUsuarios(){
            const response = await getUsuarios(token);
-           console.log(response.data);
            setUsers(response.data);
        }
        cargarUsuarios();
      }, [token]);
        
-     //console.log(ordenes[1].nombreCliente + "ordenes");
     const indexOfLastPost = currentPage * postPerPage;
     const indexOfFirstPost = indexOfLastPost - postPerPage;
     const currentPosts = users.slice(indexOfFirstPost,indexOfLastPost);
+    const handlePageChange = (event, value) => {
+      setCurrentPage(value);
+    };
     //PAGINACION
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(users.length / postPerPage); i++) {
+      pageNumbers.push(i);
+    }
 
        return (
        <>
@@ -78,11 +82,17 @@ function Usuarios () {
                       <td>{currentPosts.organizacion}</td>
                       <td>{currentPosts.telefono}</td>
                  </tr>
-                 ))}
-            
+                 ))}  
          </tbody>
-        </Table>  
-        <Pagination postPerPage={postPerPage} totalPosts={users.length} paginate={paginate}></Pagination>
+        </Table>
+            <Pagination
+              color="warning"
+              key={currentPage}
+              page={currentPage}
+              onChange={handlePageChange}
+              count={pageNumbers.length}
+              shape='rounded'
+            ></Pagination>
        </div>
        <footer className="bg-light py-4 mt-auto">
       <Container>

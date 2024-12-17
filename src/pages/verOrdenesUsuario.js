@@ -4,7 +4,8 @@ import {useLocation} from 'react-router-dom';
 import { getOrdenId, getOrdenUserId } from '../services/apiRest.js';
 import { Link } from 'react-router-dom';
 import LOGO from '../assets/images/LOGO.png';
-import Pagination from '../components/Pagination.js';
+import Pagination from '@mui/material/Pagination';
+
 import {Table} from 'react-bootstrap-v5';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
@@ -46,24 +47,21 @@ function VerOrdenUser() {
       const response = await getOrdenId(id,token);
       setSelectedData(response.data);
       handleShow();
-     ;
     }
 
         //console.log(ordenes[1].nombreCliente + "ordenes");
         const indexOfLastPost = currentPage * postPerPage;
         const indexOfFirstPost = indexOfLastPost - postPerPage;
         const currentPosts = ordenes.filter(ordenes=>ordenes.nombreCliente.toLowerCase().includes(query.toLowerCase())).slice(indexOfFirstPost,indexOfLastPost);
-        //paginas filtro
+        const handlePageChange = (event, value) => {
+          setCurrentPage(value);
+        };
         const pageFilter = ordenes.filter(ordenes=>ordenes.nombreCliente.toLowerCase().includes(query.toLowerCase())).length;
-
         const pageNumbers = [];
-        for(let i = 1; i <= Math.ceil(pageFilter/ postPerPage); i++){
+        for(let i = 1; i <= Math.ceil(pageFilter / postPerPage); i++){
         pageNumbers.push(i);
         }
-
-        const paginate = (number) => 
-        setCurrentPage(number);
-
+        const totalPages = pageNumbers.length; // Número total de páginas
 
       return (
     <>
@@ -96,7 +94,7 @@ function VerOrdenUser() {
           <div className='container'>
               <div className='row'>
                   <div className="col-md-8">                       
-                        <input type="text" placeholder="Buscar cliente.." className="search h-50" onChange={e=> setQuery(e.target.value)}></input>
+                        <input type="text" placeholder="Buscar cliente..." className="search h-50" onChange={e=> setQuery(e.target.value)}></input>
                         <FaSearch />
                   </div>   
               </div>                 
@@ -129,7 +127,14 @@ function VerOrdenUser() {
                 ))}
         </tbody>
        </Table>  
-       <Pagination postPerPage={postPerPage} totalPosts={ordenes.length} paginate={paginate}></Pagination>
+        <Pagination
+          color="warning"
+          key={currentPage}
+          page={currentPage}
+          onChange={handlePageChange}
+          count={totalPages}
+          shape='rounded'
+        ></Pagination>
       </div>
       <div>
         <footer className="bg-light py-4 mt-auto">
